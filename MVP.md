@@ -1,0 +1,5 @@
+the MVP would be a simple app where users take photos of the clothes they already own. AI identifies each item, such as a shirt, jeans, shoes, or jacket, and saves them into a digital wardrobe. The user can then ask the app to create an outfit based on what they own.
+
+the app can also take basic context into account, such as the weather and occasion. For example, a user could say "give me something casual for tomorrow" and the app would consider the forecast and suggest a suitable combination from their wardrobe.
+
+users can also add friends and connect their digital wardrobes. For a shared occasion, such as a party or trip, the AI can look at both wardrobes and create matching or coordinated outfits using only clothes they already have. This makes the MVP more than just an outfit generator, because it can help groups coordinate what to wear without everyone buying something new.
