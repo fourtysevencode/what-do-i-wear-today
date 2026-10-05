@@ -3,3 +3,6 @@
 
 # Python Environments
 .venv/
+
+# Test Images
+test-images/
