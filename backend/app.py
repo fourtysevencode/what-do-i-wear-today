@@ -25,3 +25,8 @@ def health_status():
         "version" : "Pre Alpha",
         "message" : random.choice(MESSAGES)
     }
+
+@app.post("/segment")
+def segment_image():
+    # TODO once the segmentation model is ready.
+    return {}
