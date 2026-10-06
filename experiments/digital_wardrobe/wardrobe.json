@@ -1,0 +1,82 @@
+[
+  {
+    "source_image": "/Users/guestuser/Documents/Projects/what-do-i-wear-today/experiments/test-images/test_2.png",
+    "annotated_image": "/Users/guestuser/Documents/Projects/what-do-i-wear-today/experiments/digital_wardrobe/annotated/test_2_annotated.png",
+    "items": [
+      {
+        "category": "t-shirt",
+        "type": "top",
+        "primary_color": "#a83842",
+        "secondary_color": "#ffffff",
+        "pattern": "graphic",
+        "confidence": 0.95,
+        "bounding_box": [
+          197,
+          276,
+          417,
+          712
+        ],
+        "source_image": "/Users/guestuser/Documents/Projects/what-do-i-wear-today/experiments/test-images/test_2.png",
+        "crop_path": "/Users/guestuser/Documents/Projects/what-do-i-wear-today/experiments/digital_wardrobe/crops/test_2_0_t-shirt.png",
+        "annotated_image": "/Users/guestuser/Documents/Projects/what-do-i-wear-today/experiments/digital_wardrobe/annotated/test_2_annotated.png"
+      },
+      {
+        "category": "sweatpants",
+        "type": "bottom",
+        "primary_color": "#18181a",
+        "secondary_color": "#d8dce2",
+        "pattern": "graphic",
+        "confidence": 0.93,
+        "bounding_box": [
+          412,
+          281,
+          959,
+          781
+        ],
+        "source_image": "/Users/guestuser/Documents/Projects/what-do-i-wear-today/experiments/test-images/test_2.png",
+        "crop_path": "/Users/guestuser/Documents/Projects/what-do-i-wear-today/experiments/digital_wardrobe/crops/test_2_1_sweatpants.png",
+        "annotated_image": "/Users/guestuser/Documents/Projects/what-do-i-wear-today/experiments/digital_wardrobe/annotated/test_2_annotated.png"
+      }
+    ]
+  },
+  {
+    "source_image": "/Users/guestuser/Documents/Projects/what-do-i-wear-today/experiments/test-images/test_1.png",
+    "annotated_image": "/Users/guestuser/Documents/Projects/what-do-i-wear-today/experiments/digital_wardrobe/annotated/test_1_annotated.png",
+    "items": [
+      {
+        "category": "button-down shirt",
+        "type": "top",
+        "primary_color": "#add8e6",
+        "secondary_color": null,
+        "pattern": "plain",
+        "confidence": 0.95,
+        "bounding_box": [
+          342,
+          0,
+          775,
+          650
+        ],
+        "source_image": "/Users/guestuser/Documents/Projects/what-do-i-wear-today/experiments/test-images/test_1.png",
+        "crop_path": "/Users/guestuser/Documents/Projects/what-do-i-wear-today/experiments/digital_wardrobe/crops/test_1_0_button-down_shirt.png",
+        "annotated_image": "/Users/guestuser/Documents/Projects/what-do-i-wear-today/experiments/digital_wardrobe/annotated/test_1_annotated.png"
+      },
+      {
+        "category": "pants",
+        "type": "bottom",
+        "primary_color": "#222222",
+        "secondary_color": null,
+        "pattern": "plain",
+        "confidence": 0.9,
+        "bounding_box": [
+          719,
+          117,
+          994,
+          563
+        ],
+        "source_image": "/Users/guestuser/Documents/Projects/what-do-i-wear-today/experiments/test-images/test_1.png",
+        "crop_path": "/Users/guestuser/Documents/Projects/what-do-i-wear-today/experiments/digital_wardrobe/crops/test_1_1_pants.png",
+        "annotated_image": "/Users/guestuser/Documents/Projects/what-do-i-wear-today/experiments/digital_wardrobe/annotated/test_1_annotated.png"
+      }
+    ]
+  }
+]
