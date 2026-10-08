@@ -1,11 +1,11 @@
 import type { CSSProperties } from "react";
 
 import { GarmentPrint } from "@/components/home/garment-print";
-import { byWearOrder, displayName, kindOf } from "@/lib/garment-kinds";
+import { byWearOrder, kindOf, pieceName } from "@/lib/garment-kinds";
 import type { GarmentColor } from "@/lib/garments";
 import { cn } from "@/lib/utils";
 
-export type Piece = { id: string; label: string; colors: GarmentColor[] };
+export type Piece = { id: string; label: string; name: string | null; colors: GarmentColor[] };
 
 type OutfitPiecesProps = {
   pieces: Piece[];
@@ -35,7 +35,7 @@ export function OutfitPieces({ pieces, compact = false }: OutfitPiecesProps) {
         {pieces.map((piece) => (
           <li key={piece.id} className="min-w-0">
             <GarmentPrint
-              garment={{ name: displayName(piece.label), kind: kindOf(piece.label) }}
+              garment={{ name: pieceName(piece), kind: kindOf(piece.label) }}
               src={`/api/garments/${piece.id}/image`}
             />
             {piece.colors.length > 0 && (
@@ -56,7 +56,7 @@ export function OutfitPieces({ pieces, compact = false }: OutfitPiecesProps) {
             style={{ "--tilt": i % 2 ? "1deg" : "-1deg" } as CSSProperties}
           >
             <GarmentPrint
-              garment={{ name: displayName(piece.label), kind: kindOf(piece.label) }}
+              garment={{ name: pieceName(piece), kind: kindOf(piece.label) }}
               src={`/api/garments/${piece.id}/image`}
             />
           </li>

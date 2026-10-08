@@ -1,9 +1,10 @@
 "use client";
 
-import { CircleNotchIcon, TrashIcon } from "@phosphor-icons/react/dist/ssr";
+import { TrashIcon } from "@phosphor-icons/react/dist/ssr";
 import { useState, useTransition } from "react";
 
 import { deleteSavedOutfit } from "@/app/(app)/outfits/actions";
+import { Spinner } from "@/components/app/spinner";
 import { buttonSmall } from "@/components/app/styles";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +34,7 @@ export function DeleteOutfit({ id, title }: { id: string; title: string }) {
       <button
         type="button"
         disabled={pending}
+        aria-busy={pending || undefined}
         onClick={() =>
           startTransition(async () => {
             const result = await deleteSavedOutfit(id);
@@ -41,13 +43,14 @@ export function DeleteOutfit({ id, title }: { id: string; title: string }) {
         }
         className={cn(buttonSmall, "bg-destructive text-destructive-foreground hover:bg-destructive/90")}
       >
-        {pending && <CircleNotchIcon aria-hidden="true" className="size-4 animate-spin motion-reduce:animate-none" />}
+        {pending && <Spinner />}
         {pending ? "Deleting…" : "Delete"}
       </button>
       <button
         type="button"
         autoFocus
         disabled={pending}
+        aria-busy={pending || undefined}
         onClick={() => {
           setConfirming(false);
           setError(null);

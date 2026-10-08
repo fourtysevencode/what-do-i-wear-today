@@ -4,6 +4,7 @@ import { UserPlusIcon } from "@phosphor-icons/react/dist/ssr";
 import { useActionState, useEffect, useRef } from "react";
 
 import { addFriend } from "@/app/(app)/friends/actions";
+import { Spinner } from "@/components/app/spinner";
 import { buttonPrimary, input, label } from "@/components/app/styles";
 import { cn } from "@/lib/utils";
 
@@ -40,8 +41,8 @@ export function AddFriendForm() {
             className={cn(input, "pl-8")}
           />
         </div>
-        <button type="submit" disabled={pending} className={buttonPrimary}>
-          <UserPlusIcon aria-hidden="true" className="size-4" />
+        <button type="submit" disabled={pending} aria-busy={pending || undefined} className={buttonPrimary}>
+          {pending ? <Spinner /> : <UserPlusIcon aria-hidden="true" className="size-4" />}
           {pending ? "Sending…" : "Send Request"}
         </button>
       </div>

@@ -1,51 +1,37 @@
 import type { ReactNode } from "react";
 
+import { GarmentColors } from "@/components/app/garment-colors";
 import { RemoveGarment } from "@/components/app/remove-garment";
+import { RenameGarment } from "@/components/app/rename-garment";
 import { GarmentPrint } from "@/components/home/garment-print";
-import { displayName, kindOf } from "@/lib/garment-kinds";
+import { kindOf, pieceName } from "@/lib/garment-kinds";
 import type { StoredGarment } from "@/lib/garments";
 
 type WardrobeGridProps = {
   garments: StoredGarment[];
   empty: ReactNode;
-  /** Show a remove control on each piece (your own wardrobe only). */
-  removable?: boolean;
+  /** Show rename, remove and colour controls on each piece (your own wardrobe only). */
+  editable?: boolean;
 };
 
-export function WardrobeGrid({ garments, empty, removable = false }: WardrobeGridProps) {
+export function WardrobeGrid({ garments, empty, editable = false }: WardrobeGridProps) {
   if (garments.length === 0) return <>{empty}</>;
 
   return (
     <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 2xl:grid-cols-4">
-      {garments.map((garment) => (
-        <li key={garment.id} className="group min-w-0">
-          <div className="relative">
-            <GarmentPrint
-              garment={{ name: displayName(garment.label), kind: kindOf(garment.label) }}
-              src={`/api/garments/${garment.id}/image`}
-            />
-            {removable && <RemoveGarment id={garment.id} name={displayName(garment.label)} />}
-          </div>
-          {garment.colors.length > 0 && (
-            <ul aria-label="Colours" className="mt-3 flex flex-wrap gap-1.5 px-1">
-              {garment.colors.map((color) => (
-                <li
-                  key={color.name}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 text-xs"
-                  title={`${color.percentage}%`}
-                >
-                  <span
-                    aria-hidden="true"
-                    className="size-3 rounded-full ring-1 ring-foreground/15"
-                    style={{ backgroundColor: color.hex }}
-                  />
-                  {color.name}
-                </li>
-              ))}
-            </ul>
-          )}
-        </li>
-      ))}
+      {garments.map((garment) => {
+        const name = pieceName(garment);
+        return (
+          <li key={garment.id} className="group min-w-0">
+            <div className="relative">
+              <GarmentPrint garment={{ name, kind: kindOf(garment.label) }} src={`/api/garments/${garment.id}/image`} />
+              {editable && <RenameGarment id={garment.id} name={name} customName={garment.name} />}
+              {editable && <RemoveGarment id={garment.id} name={name} />}
+            </div>
+            <GarmentColors garmentId={garment.id} colors={garment.colors} editable={editable} />
+          </li>
+        );
+      })}
     </ul>
   );
 }

@@ -16,7 +16,8 @@ export function RecheckButton() {
       type="button"
       onClick={() => startTransition(() => router.refresh())}
       disabled={pending}
-      className="inline-flex h-11 items-center gap-2 rounded-full border border-foreground/15 px-5 text-sm font-medium transition-[background-color,border-color,scale] duration-300 ease-soft hover:border-foreground/30 hover:bg-foreground/5 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none active:scale-[0.98] disabled:opacity-70"
+      aria-busy={pending || undefined}
+      className="inline-flex h-11 items-center gap-2 rounded-full border border-foreground/15 px-5 text-sm font-medium transition-[background-color,border-color,scale] duration-300 ease-soft hover:border-foreground/30 hover:bg-foreground/5 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none active:scale-[0.98] aria-busy:bg-foreground/10 aria-busy:brightness-[0.82]"
     >
       <ArrowClockwiseIcon
         aria-hidden="true"

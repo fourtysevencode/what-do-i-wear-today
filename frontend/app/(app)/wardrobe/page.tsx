@@ -27,7 +27,7 @@ function EmptyWardrobe() {
 async function MyWardrobe() {
   const user = await requireUser();
   const garments = await listGarments(user.id);
-  return <WardrobeGrid garments={garments} empty={<EmptyWardrobe />} removable />;
+  return <WardrobeGrid garments={garments} empty={<EmptyWardrobe />} editable />;
 }
 
 export default function WardrobePage() {

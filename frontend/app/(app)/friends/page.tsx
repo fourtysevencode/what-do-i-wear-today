@@ -5,6 +5,7 @@ import { Suspense } from "react";
 
 import { respondToFriendRequest } from "@/app/(app)/friends/actions";
 import { AddFriendForm } from "@/components/app/add-friend-form";
+import { SubmitButton } from "@/components/app/submit-button";
 import { buttonSmall } from "@/components/app/styles";
 import { requireUser } from "@/lib/dal";
 import { listConnections, type Person } from "@/lib/friends";
@@ -46,24 +47,24 @@ function RequestRow({ person }: { person: Person }) {
       </p>
       <form action={respondToFriendRequest} className="flex gap-2">
         <input type="hidden" name="requesterId" value={person.id} />
-        <button
-          type="submit"
+        <SubmitButton
           name="decision"
           value="accept"
+          icon={<CheckIcon aria-hidden="true" className="size-4" weight="bold" />}
+          pendingLabel="Accepting…"
           className={cn(buttonSmall, "bg-primary text-primary-foreground hover:bg-primary/90")}
         >
-          <CheckIcon aria-hidden="true" className="size-4" weight="bold" />
           Accept
-        </button>
-        <button
-          type="submit"
+        </SubmitButton>
+        <SubmitButton
           name="decision"
           value="decline"
+          icon={<XIcon aria-hidden="true" className="size-4" />}
+          pendingLabel="Declining…"
           className={cn(buttonSmall, "border border-foreground/15 hover:bg-foreground/5")}
         >
-          <XIcon aria-hidden="true" className="size-4" />
           Decline
-        </button>
+        </SubmitButton>
       </form>
     </li>
   );

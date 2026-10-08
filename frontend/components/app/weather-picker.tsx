@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  CircleNotchIcon,
   CloudFogIcon,
   CloudIcon,
   CloudLightningIcon,
@@ -13,6 +12,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { useEffect, useId, useRef, useState } from "react";
 
+import { Spinner } from "@/components/app/spinner";
 import { buttonSecondary, input, label } from "@/components/app/styles";
 import type { WeatherReport } from "@/lib/api";
 
@@ -152,9 +152,15 @@ export function WeatherPicker({ onChange, initialQuery }: WeatherPickerProps) {
   return (
     <fieldset className="flex flex-col gap-3">
       <legend className={`${label} mb-2`}>Weather</legend>
-      <button type="button" onClick={locateMe} disabled={loading} className={`${buttonSecondary} w-full`}>
+      <button
+        type="button"
+        onClick={locateMe}
+        disabled={loading}
+        aria-busy={(loading && weather.source === "location") || undefined}
+        className={`${buttonSecondary} w-full`}
+      >
         {loading && weather.source === "location" ? (
-          <CircleNotchIcon aria-hidden="true" className="size-4 animate-spin motion-reduce:animate-none" />
+          <Spinner />
         ) : (
           <MapPinIcon aria-hidden="true" className="size-4" />
         )}
@@ -189,10 +195,14 @@ export function WeatherPicker({ onChange, initialQuery }: WeatherPickerProps) {
             }}
             className={`${input} min-w-0 flex-1`}
           />
-          <button type="button" onClick={checkPlace} disabled={loading} className={buttonSecondary}>
-            {loading && weather.source === "place" ? (
-              <CircleNotchIcon aria-hidden="true" className="size-4 animate-spin motion-reduce:animate-none" />
-            ) : null}
+          <button
+            type="button"
+            onClick={checkPlace}
+            disabled={loading}
+            aria-busy={(loading && weather.source === "place") || undefined}
+            className={buttonSecondary}
+          >
+            {loading && weather.source === "place" && <Spinner />}
             Check
           </button>
         </div>

@@ -4,6 +4,7 @@ import { Suspense } from "react";
 
 import { adminLogout } from "@/app/fourtysevencode/actions";
 import { AdminLogin } from "@/app/fourtysevencode/admin-login";
+import { SubmitButton } from "@/components/app/submit-button";
 import { buttonSmall, surface } from "@/components/app/styles";
 import { getAdminStats, isAdmin } from "@/lib/admin";
 import { cn } from "@/lib/utils";
@@ -81,9 +82,9 @@ async function Dashboard() {
       </section>
 
       <form action={adminLogout} className="mt-6">
-        <button type="submit" className={cn(buttonSmall, "border border-foreground/15 hover:bg-foreground/5")}>
+        <SubmitButton pendingLabel="Locking…" className={cn(buttonSmall, "border border-foreground/15 hover:bg-foreground/5")}>
           Lock
-        </button>
+        </SubmitButton>
       </form>
     </>
   );

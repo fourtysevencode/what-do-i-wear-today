@@ -26,11 +26,12 @@ export function weatherLine(raw: unknown) {
   return parsed.success ? summarizeWeather(parsed.data as WeatherReport) : null;
 }
 
-/** What the stylist needs per garment: its id, label and colour names. */
+/** What the stylist needs per garment: its id, label (with the owner's name for it) and colour names. */
 export function toStylistItems(garments: StoredGarment[]): StylistItem[] {
   return garments.map((garment) => ({
     id: garment.id,
-    label: garment.label,
+    // The backend caps labels at 60 characters; names are at most 40.
+    label: (garment.name ? `${garment.name} (${garment.label})` : garment.label).slice(0, 60),
     colors: garment.colors.map((color) => color.name),
   }));
 }
@@ -40,6 +41,6 @@ export function pick(garments: StoredGarment[], ids: string[]) {
   const byId = new Map(garments.map((garment) => [garment.id, garment]));
   return ids.flatMap((id) => {
     const garment = byId.get(id);
-    return garment ? [{ id: garment.id, label: garment.label, colors: garment.colors }] : [];
+    return garment ? [{ id: garment.id, label: garment.label, name: garment.name, colors: garment.colors }] : [];
   });
 }

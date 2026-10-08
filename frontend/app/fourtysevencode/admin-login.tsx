@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 
 import { adminLogin } from "@/app/fourtysevencode/actions";
+import { Spinner } from "@/components/app/spinner";
 import { buttonPrimary, fieldError, input, label } from "@/components/app/styles";
 
 export function AdminLogin() {
@@ -28,7 +29,8 @@ export function AdminLogin() {
           {state.error}
         </p>
       )}
-      <button type="submit" disabled={pending} className={`${buttonPrimary} mt-3 self-start`}>
+      <button type="submit" disabled={pending} aria-busy={pending || undefined} className={`${buttonPrimary} mt-3 self-start`}>
+        {pending && <Spinner />}
         {pending ? "Checking…" : "Unlock"}
       </button>
     </form>

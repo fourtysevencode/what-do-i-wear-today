@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 
 import type { AuthState } from "@/app/(auth)/actions";
+import { Spinner } from "@/components/app/spinner";
 import { buttonPrimary, fieldError, input, label } from "@/components/app/styles";
 import { Turnstile } from "@/components/app/turnstile";
 import { cn } from "@/lib/utils";
@@ -101,7 +102,13 @@ export function AuthForm({ mode, action }: AuthFormProps) {
         </p>
       )}
 
-      <button type="submit" disabled={pending} className={`${buttonPrimary} mt-1 h-12 w-full text-[15px]`}>
+      <button
+        type="submit"
+        disabled={pending}
+        aria-busy={pending || undefined}
+        className={`${buttonPrimary} mt-1 h-12 w-full text-[15px]`}
+      >
+        {pending && <Spinner />}
         {pending ? text.pending : text.submit}
       </button>
 

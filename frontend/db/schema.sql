@@ -26,6 +26,9 @@ create table if not exists garments (
   created_at timestamptz not null default now()
 );
 
+-- The owner's own name for a piece, e.g. "Blue oxford". Null shows the label instead.
+alter table garments add column if not exists name text;
+
 create index if not exists garments_user_created_idx on garments (user_id, created_at desc);
 
 create table if not exists friendships (

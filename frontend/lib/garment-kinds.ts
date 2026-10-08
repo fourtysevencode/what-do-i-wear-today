@@ -22,6 +22,11 @@ export const kindOf = (label: string) => KIND_BY_LABEL[label] ?? "piece";
 
 export const displayName = (label: string) => label.charAt(0).toUpperCase() + label.slice(1);
 
+/** What to call a piece: the owner's name for it if they gave one, otherwise its label. */
+export const pieceName = (piece: { label: string; name: string | null }) => piece.name ?? displayName(piece.label);
+
+export const MAX_NAME_LENGTH = 40;
+
 export function byWearOrder<T extends { label: string }>(items: T[]) {
   return [...items].sort((a, b) => WEAR_ORDER[kindOf(a.label)] - WEAR_ORDER[kindOf(b.label)]);
 }

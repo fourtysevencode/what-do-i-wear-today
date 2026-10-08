@@ -4,6 +4,7 @@ import { Suspense } from "react";
 
 import { logout } from "@/app/(app)/actions";
 import { AppNav, AppNavFallback } from "@/components/app/app-nav";
+import { SubmitButton } from "@/components/app/submit-button";
 import { Wordmark } from "@/components/home/site-header";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { getCurrentUser } from "@/lib/dal";
@@ -50,13 +51,13 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
               </Suspense>
             </div>
             <form action={logout}>
-              <button
-                type="submit"
-                className="flex h-10 items-center gap-2 rounded-full px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none lg:-ml-3"
+              <SubmitButton
+                icon={<SignOutIcon aria-hidden="true" className="size-5" />}
+                pendingLabel={<span className="sr-only sm:not-sr-only">Logging out…</span>}
+                className="flex h-10 items-center gap-2 rounded-full px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none aria-busy:bg-foreground/10 aria-busy:text-foreground lg:-ml-3 [&>svg]:size-5"
               >
-                <SignOutIcon aria-hidden="true" className="size-5" />
                 <span className="sr-only sm:not-sr-only">Log Out</span>
-              </button>
+              </SubmitButton>
             </form>
           </div>
         </div>

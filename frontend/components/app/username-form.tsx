@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 
 import { changeUsername } from "@/app/(app)/account/actions";
+import { Spinner } from "@/components/app/spinner";
 import { buttonPrimary, input, label } from "@/components/app/styles";
 import { cn } from "@/lib/utils";
 
@@ -40,7 +41,8 @@ export function UsernameForm({ current }: { current: string }) {
             className={cn(input, "pl-8")}
           />
         </div>
-        <button type="submit" disabled={pending} className={buttonPrimary}>
+        <button type="submit" disabled={pending} aria-busy={pending || undefined} className={buttonPrimary}>
+          {pending && <Spinner />}
           {pending ? "Saving…" : "Save Username"}
         </button>
       </div>

@@ -1,14 +1,18 @@
 // Shared control styles for the signed-in app. Shape rule from the homepage:
 // controls are pills, surfaces use --radius-surface, prints use --radius-print.
 
+// While a request runs, a button gets aria-busy: it darkens and stays fully opaque
+// (instead of fading like a plain disabled button) so the press reads as "working".
+const busy = "disabled:not-aria-busy:opacity-60 aria-busy:brightness-[0.82]";
+
 const focus =
   "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
-export const buttonPrimary = `inline-flex h-11 items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-medium whitespace-nowrap text-primary-foreground transition-[background-color,scale,opacity] duration-300 ease-soft hover:bg-primary/90 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60 ${focus}`;
+export const buttonPrimary = `inline-flex h-11 items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-medium whitespace-nowrap text-primary-foreground transition-[background-color,scale,opacity] duration-300 ease-soft hover:bg-primary/90 active:scale-[0.98] disabled:pointer-events-none ${busy} ${focus}`;
 
-export const buttonSecondary = `inline-flex h-11 items-center justify-center gap-2 rounded-full border border-foreground/15 px-5 text-sm font-medium whitespace-nowrap transition-[background-color,border-color,scale,opacity] duration-300 ease-soft hover:border-foreground/30 hover:bg-foreground/5 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60 ${focus}`;
+export const buttonSecondary = `inline-flex h-11 items-center justify-center gap-2 rounded-full border border-foreground/15 px-5 text-sm font-medium whitespace-nowrap transition-[background-color,border-color,scale,opacity] duration-300 ease-soft hover:border-foreground/30 hover:bg-foreground/5 active:scale-[0.98] disabled:pointer-events-none ${busy} ${focus}`;
 
-export const buttonSmall = `inline-flex h-9 items-center justify-center gap-1.5 rounded-full px-4 text-sm font-medium whitespace-nowrap transition-[background-color,border-color,scale] duration-300 ease-soft active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60 ${focus}`;
+export const buttonSmall = `inline-flex h-9 items-center justify-center gap-1.5 rounded-full px-4 text-sm font-medium whitespace-nowrap transition-[background-color,border-color,scale] duration-300 ease-soft active:scale-[0.98] disabled:pointer-events-none ${busy} ${focus}`;
 
 export const inputBase =
   "w-full border border-input bg-card text-[15px] text-foreground placeholder:text-muted-foreground transition-[border-color,box-shadow] duration-200 outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/25 aria-invalid:border-destructive";

@@ -1,10 +1,11 @@
 "use client";
 
-import { CameraIcon, CircleNotchIcon, PlusIcon } from "@phosphor-icons/react/dist/ssr";
+import { CameraIcon, PlusIcon } from "@phosphor-icons/react/dist/ssr";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 
 import { CameraCapture } from "@/components/app/camera-capture";
+import { Spinner } from "@/components/app/spinner";
 import { buttonPrimary, buttonSecondary } from "@/components/app/styles";
 
 const MAX_EDGE = 1600; // px; plenty for segmentation, keeps uploads around 0.3 to 1 MB
@@ -103,10 +104,11 @@ export function AddClothing() {
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={working}
+          aria-busy={working || undefined}
           className={buttonPrimary}
         >
           {working ? (
-            <CircleNotchIcon aria-hidden="true" className="size-4 animate-spin motion-reduce:animate-none" />
+            <Spinner />
           ) : (
             <PlusIcon aria-hidden="true" className="size-4" weight="bold" />
           )}

@@ -1,9 +1,10 @@
 "use client";
 
-import { BookmarkSimpleIcon, CheckIcon, CircleNotchIcon, SparkleIcon } from "@phosphor-icons/react/dist/ssr";
+import { BookmarkSimpleIcon, CheckIcon, SparkleIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { Spinner } from "@/components/app/spinner";
 import { buttonSecondary } from "@/components/app/styles";
 
 export type SaveState = { kind: "idle" } | { kind: "saving" } | { kind: "saved" } | { kind: "error"; message: string };
@@ -30,7 +31,7 @@ export function StylingSkeleton({ columns = 1 }: { columns?: 1 | 2 }) {
 export function StylingStatus({ slow }: { slow: boolean }) {
   return (
     <p role="status" className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
-      <CircleNotchIcon aria-hidden="true" className="size-4 animate-spin motion-reduce:animate-none" />
+      <Spinner />
       {slow ? "Still styling. The server may be waking up, which can take up to a minute." : "Styling your outfit…"}
     </p>
   );
@@ -61,9 +62,15 @@ export function SaveButton({ state, onSave }: { state: SaveState; onSave: () => 
   }
   return (
     <div className="flex flex-col items-start gap-1">
-      <button type="button" onClick={onSave} disabled={state.kind === "saving"} className={buttonSecondary}>
+      <button
+        type="button"
+        onClick={onSave}
+        disabled={state.kind === "saving"}
+        aria-busy={state.kind === "saving" || undefined}
+        className={buttonSecondary}
+      >
         {state.kind === "saving" ? (
-          <CircleNotchIcon aria-hidden="true" className="size-4 animate-spin motion-reduce:animate-none" />
+          <Spinner />
         ) : (
           <BookmarkSimpleIcon aria-hidden="true" className="size-4" />
         )}

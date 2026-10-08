@@ -15,6 +15,7 @@ import {
   StylingStatus,
   type SaveState,
 } from "@/components/app/studio-parts";
+import { Spinner } from "@/components/app/spinner";
 import { buttonPrimary, label, surface, textarea } from "@/components/app/styles";
 import { WeatherPicker, type WeatherChoice } from "@/components/app/weather-picker";
 
@@ -129,8 +130,15 @@ export function OutfitStudio() {
           />
         </div>
         <WeatherPicker onChange={handleWeather} initialQuery={initialWeather} />
-        <button type="submit" disabled={loading} className={`${buttonPrimary} h-12 w-full text-[15px]`}>
-          {status.kind === "ready" ? (
+        <button
+          type="submit"
+          disabled={loading}
+          aria-busy={loading || undefined}
+          className={`${buttonPrimary} h-12 w-full text-[15px]`}
+        >
+          {loading ? (
+            <Spinner />
+          ) : status.kind === "ready" ? (
             <ArrowsClockwiseIcon aria-hidden="true" className="size-4" />
           ) : (
             <SparkleIcon aria-hidden="true" className="size-4" weight="fill" />
