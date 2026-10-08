@@ -42,3 +42,37 @@ create unique index if not exists friendships_pair_idx
   on friendships (least(requester_id, addressee_id), greatest(requester_id, addressee_id));
 
 create index if not exists friendships_addressee_idx on friendships (addressee_id, status);
+
+-- Saved outfits. friend_id is set for matching outfits built with a friend.
+create table if not exists outfits (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users (id) on delete cascade,
+  friend_id uuid references users (id) on delete set null,
+  title text not null,
+  -- Why it works (solo) or how the two looks go together (matching).
+  reasoning text not null,
+  your_note text,
+  friend_note text,
+  notes text,
+  weather text,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists outfits_user_created_idx on outfits (user_id, created_at desc);
+
+-- Pieces in each outfit. Removing a garment removes it from saved outfits too.
+create table if not exists outfit_items (
+  outfit_id uuid not null references outfits (id) on delete cascade,
+  garment_id uuid not null references garments (id) on delete cascade,
+  side text not null default 'you' check (side in ('you', 'friend')),
+  position integer not null default 0,
+  primary key (outfit_id, garment_id)
+);
+
+-- One row per outfit the stylist builds (saved or not), for usage stats.
+create table if not exists outfit_generations (
+  id bigint generated always as identity primary key,
+  user_id uuid references users (id) on delete set null,
+  kind text not null check (kind in ('solo', 'match')),
+  created_at timestamptz not null default now()
+);

@@ -5,6 +5,7 @@ import { useActionState } from "react";
 
 import type { AuthState } from "@/app/(auth)/actions";
 import { buttonPrimary, fieldError, input, label } from "@/components/app/styles";
+import { Turnstile } from "@/components/app/turnstile";
 import { cn } from "@/lib/utils";
 
 type AuthFormProps = {
@@ -91,6 +92,8 @@ export function AuthForm({ mode, action }: AuthFormProps) {
           )
         )}
       </div>
+
+      {mode === "signup" && <Turnstile resetKey={state} />}
 
       {state?.error && (
         <p role="alert" className="rounded-(--radius-print) bg-destructive/10 px-4 py-3 text-sm text-destructive">

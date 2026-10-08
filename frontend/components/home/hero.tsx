@@ -74,8 +74,8 @@ export function Hero() {
           className="animate-rise mt-6 max-w-[34ch] text-lg leading-relaxed text-muted-foreground md:text-xl"
           style={{ "--delay": "120ms" } as CSSProperties}
         >
-          Photograph the clothes you own. Get a sorted wardrobe and outfits
-          picked for the weather and your plans.
+          Snap the clothes you own. An AI stylist builds outfits from them for
+          the weather and your plans.
         </p>
         <div
           className="animate-rise mt-10 flex flex-wrap items-center gap-3"

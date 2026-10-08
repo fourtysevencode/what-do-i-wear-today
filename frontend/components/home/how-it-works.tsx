@@ -1,4 +1,4 @@
-import { CloudSunIcon } from "@phosphor-icons/react/dist/ssr";
+import { SparkleIcon } from "@phosphor-icons/react/dist/ssr";
 import type { CSSProperties } from "react";
 
 import { GarmentPrint } from "@/components/home/garment-print";
@@ -24,8 +24,8 @@ export function HowItWorks() {
             Every piece, cut out
           </h3>
           <p className="mt-3 max-w-[40ch] leading-relaxed text-pretty text-muted-foreground">
-            The model finds each garment in your photo, lifts it off the
-            background and names it.
+            Take a mirror photo with the camera or upload one. Each garment is
+            found, cut out and named, colours included.
           </p>
           <div className="mx-auto mt-10 grid max-w-[30rem] grid-cols-2 gap-5 md:gap-8">
             {[buttonDown, trousers].map((garment, i) => (
@@ -69,14 +69,14 @@ export function HowItWorks() {
         </article>
 
         <article className="reveal flex flex-col justify-between gap-10 rounded-(--radius-surface) bg-rose p-6 text-swatch-ink md:col-span-5 md:p-8">
-          <CloudSunIcon aria-hidden="true" className="size-10" weight="light" />
+          <SparkleIcon aria-hidden="true" className="size-10" weight="light" />
           <div>
             <h3 className="font-heading text-2xl font-semibold tracking-tight">
-              Planned around your day
+              An AI stylist plans the outfit
             </h3>
             <p className="mt-3 max-w-[40ch] leading-relaxed text-pretty">
-              Suggestions check the forecast and where you are headed, from
-              interviews to beach days.
+              Tell it where you&apos;re headed. It checks the forecast and picks
+              a look from your wardrobe, from interviews to beach days.
             </p>
           </div>
         </article>

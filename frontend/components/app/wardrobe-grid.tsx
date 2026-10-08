@@ -2,26 +2,8 @@ import type { ReactNode } from "react";
 
 import { RemoveGarment } from "@/components/app/remove-garment";
 import { GarmentPrint } from "@/components/home/garment-print";
+import { displayName, kindOf } from "@/lib/garment-kinds";
 import type { StoredGarment } from "@/lib/garments";
-
-// The segmentation model's DeepFashion2 classes, grouped into wardrobe sections.
-const KIND_BY_LABEL: Record<string, string> = {
-  "short sleeve top": "top",
-  "long sleeve top": "top",
-  vest: "top",
-  sling: "top",
-  "short sleeve outwear": "outerwear",
-  "long sleeve outwear": "outerwear",
-  shorts: "bottom",
-  trousers: "bottom",
-  skirt: "bottom",
-  "short sleeve dress": "dress",
-  "long sleeve dress": "dress",
-  "vest dress": "dress",
-  "sling dress": "dress",
-};
-
-const displayName = (label: string) => label.charAt(0).toUpperCase() + label.slice(1);
 
 type WardrobeGridProps = {
   garments: StoredGarment[];
@@ -39,7 +21,7 @@ export function WardrobeGrid({ garments, empty, removable = false }: WardrobeGri
         <li key={garment.id} className="group min-w-0">
           <div className="relative">
             <GarmentPrint
-              garment={{ name: displayName(garment.label), kind: KIND_BY_LABEL[garment.label] ?? "piece" }}
+              garment={{ name: displayName(garment.label), kind: kindOf(garment.label) }}
               src={`/api/garments/${garment.id}/image`}
             />
             {removable && <RemoveGarment id={garment.id} name={displayName(garment.label)} />}

@@ -1,9 +1,10 @@
-import { ArrowLeftIcon } from "@phosphor-icons/react/dist/ssr";
+import { ArrowLeftIcon, SparkleIcon } from "@phosphor-icons/react/dist/ssr";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { buttonPrimary } from "@/components/app/styles";
 import { WardrobeGrid, WardrobeGridSkeleton } from "@/components/app/wardrobe-grid";
 import { requireUser } from "@/lib/dal";
 import { findFriend } from "@/lib/friends";
@@ -24,9 +25,15 @@ async function FriendWardrobe({ params }: { params: PageProps<"/friends/[usernam
       <h1 className="type-display text-4xl md:text-5xl">
         <span translate="no">@{friend.username}</span>&apos;s wardrobe
       </h1>
-      <p className="mt-2 mb-8 text-muted-foreground">
-        {garments.length} {garments.length === 1 ? "piece" : "pieces"}
-      </p>
+      <div className="mt-2 mb-8 flex flex-wrap items-center justify-between gap-4">
+        <p className="text-muted-foreground">
+          {garments.length} {garments.length === 1 ? "piece" : "pieces"}
+        </p>
+        <Link href={`/outfits/match?friend=${encodeURIComponent(friend.username)}`} className={buttonPrimary}>
+          <SparkleIcon aria-hidden="true" className="size-4" weight="fill" />
+          Build Matching Outfits
+        </Link>
+      </div>
       <WardrobeGrid
         garments={garments}
         empty={

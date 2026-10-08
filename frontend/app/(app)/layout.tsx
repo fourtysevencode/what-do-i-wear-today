@@ -28,7 +28,12 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
             href="/"
             className="mr-auto rounded-md px-1 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none lg:mr-0 lg:px-4"
           >
-            <Wordmark />
+            {/* Phones get the logo mark so all four nav items fit. */}
+            <span className="hidden sm:inline">
+              <Wordmark />
+            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/icon.svg" alt="What do I wear today, home" width={32} height={32} className="size-8 sm:hidden" />
           </Link>
 
           <nav aria-label="App" className="flex gap-1 lg:flex-col">

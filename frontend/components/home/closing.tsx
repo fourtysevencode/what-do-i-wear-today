@@ -1,3 +1,4 @@
+import { ArrowUpRightIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 
 import { PrimaryCta } from "@/components/home/cta";
@@ -14,13 +15,20 @@ export function Closing() {
           What do I wear <span className="text-pop">today?</span>
         </h2>
         <p className="reveal mt-6 max-w-[40ch] text-lg leading-relaxed text-pretty text-muted-foreground md:text-xl">
-          The app is in early development. Follow along on GitHub, or help
-          build it.
+          Ask the closet you already have. Your wardrobe, outfits for the
+          weather, and matching looks with friends.
         </p>
-        <div className="reveal mt-10">
-          <PrimaryCta href={REPO_URL} external>
+        <div className="reveal mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
+          <PrimaryCta href="/signup">Sign Up</PrimaryCta>
+          <a
+            href={REPO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-full text-[15px] font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          >
             View on GitHub
-          </PrimaryCta>
+            <ArrowUpRightIcon aria-hidden="true" className="size-4" />
+          </a>
         </div>
       </div>
     </section>

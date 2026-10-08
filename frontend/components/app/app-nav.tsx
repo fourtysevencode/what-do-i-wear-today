@@ -1,6 +1,6 @@
 "use client";
 
-import { TShirtIcon, UserCircleIcon, UsersThreeIcon } from "@phosphor-icons/react/dist/ssr";
+import { CoatHangerIcon, TShirtIcon, UserCircleIcon, UsersThreeIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 
 const items = [
   { href: "/wardrobe", label: "Wardrobe", Icon: TShirtIcon },
+  { href: "/outfits", label: "Outfits", Icon: CoatHangerIcon },
   { href: "/friends", label: "Friends", Icon: UsersThreeIcon },
   { href: "/account", label: "Account", Icon: UserCircleIcon },
 ];

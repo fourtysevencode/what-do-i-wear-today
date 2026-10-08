@@ -1,6 +1,7 @@
-from fastapi import FastAPI, File, HTTPException, Query, UploadFile
+from fastapi import Depends, FastAPI, File, Header, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Optional
+from pydantic import BaseModel, Field
+from typing import List, Optional
 import base64
 import os
 import time
@@ -10,6 +11,7 @@ import cv2
 import numpy as np
 
 from services.pipeline import analyze_outfit
+from services.stylist import StylistBusy, StylistError, StylistUnavailable, build_matching, build_outfit
 from services.weather import PlaceNotFound, WeatherUnavailable, geocode, get_weather
 from utils.colors import identify_colors
 
@@ -34,6 +36,14 @@ ALLOWED_ORIGINS = [
     if origin.strip()
 ]
 
+# Optional shared secret for the costly endpoints (segmentation, Gemini). When API_TOKEN
+# is set (e.g. as a Space secret), callers must send it as the X-API-Token header.
+API_TOKEN = os.environ.get("API_TOKEN")
+
+def require_token(x_api_token: Optional[str] = Header(None)):
+    if API_TOKEN and x_api_token != API_TOKEN:
+        raise HTTPException(status_code=401, detail="missing or wrong API token")
+
 START_TIME = time.time()
 def get_uptime():
     return round(time.time() - START_TIME)
@@ -57,7 +67,7 @@ def health_status():
         "message" : random.choice(MESSAGES)
     }
 
-@app.post("/segment")
+@app.post("/segment", dependencies=[Depends(require_token)])
 def segment_image(image: UploadFile = File(...)):
     data = image.file.read()
     decoded = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
@@ -106,3 +116,45 @@ def weather(
         raise HTTPException(status_code=404, detail=f"couldn't find a place called '{q}'")
     except WeatherUnavailable as e:
         raise HTTPException(status_code=502, detail=str(e))
+
+
+class WardrobeItem(BaseModel):
+    id: str = Field(..., max_length=64)
+    label: str = Field(..., max_length=60)
+    colors: List[str] = Field(default_factory=list, max_length=6)
+
+class OutfitRequest(BaseModel):
+    wardrobe: List[WardrobeItem] = Field(..., min_length=1, max_length=300)
+    notes: str = Field("", max_length=500)
+    weather: Optional[str] = Field(None, max_length=300)
+
+class MatchRequest(BaseModel):
+    you: List[WardrobeItem] = Field(..., min_length=1, max_length=300)
+    friend: List[WardrobeItem] = Field(..., min_length=1, max_length=300)
+    friend_name: str = Field("your friend", max_length=40)
+    notes: str = Field("", max_length=500)
+    weather: Optional[str] = Field(None, max_length=300)
+
+def _stylist(call):
+    """Run a Gemini call and turn its failures into clear HTTP errors."""
+    try:
+        return call()
+    except StylistUnavailable:
+        raise HTTPException(status_code=503, detail="the stylist isn't set up yet (no Gemini API key)")
+    except StylistBusy:
+        raise HTTPException(status_code=503, detail="the stylist is busy right now, try again in a moment")
+    except StylistError as e:
+        raise HTTPException(status_code=502, detail=f"the stylist gave an unusable answer: {e}")
+
+@app.post("/outfit", dependencies=[Depends(require_token)])
+def outfit(request: OutfitRequest):
+    """Pick one outfit from a wardrobe with Gemini."""
+    wardrobe = [item.model_dump() for item in request.wardrobe]
+    return _stylist(lambda: build_outfit(wardrobe, request.notes, request.weather))
+
+@app.post("/outfit/match", dependencies=[Depends(require_token)])
+def outfit_match(request: MatchRequest):
+    """Coordinated outfits for two people, each from their own wardrobe."""
+    you = [item.model_dump() for item in request.you]
+    friend = [item.model_dump() for item in request.friend]
+    return _stylist(lambda: build_matching(you, friend, request.friend_name, request.notes, request.weather))

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { getSession } from "@/lib/session";
+import { verifyTurnstile } from "@/lib/turnstile";
 import { createUser, USERNAME_PATTERN, verifyCredentials } from "@/lib/users";
 
 export type AuthState =
@@ -47,6 +48,12 @@ export async function signup(_prev: AuthState, formData: FormData): Promise<Auth
   const parsed = signupSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
     return { fieldErrors: z.flattenError(parsed.error).fieldErrors, username: String(formData.get("username") ?? "") };
+  }
+
+  // Cloudflare Turnstile: stops scripted sign-ups (no-op until TURNSTILE_SECRET_KEY is set).
+  const human = await verifyTurnstile(formData.get("cf-turnstile-response")?.toString() ?? null);
+  if (!human) {
+    return { error: "We couldn't confirm you're not a bot. Wait for the check to finish, then try again.", username: parsed.data.username };
   }
 
   const result = await createUser(parsed.data.username, parsed.data.password);

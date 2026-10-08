@@ -2,6 +2,11 @@
 export const API_URL =
   process.env.API_URL ?? "https://fourtysevencode-what-do-i-wear-today.hf.space";
 
+/** Sent with costly calls when the Space sets API_TOKEN (same secret in Vercel and the Space). */
+function backendHeaders(): Record<string, string> {
+  return process.env.API_TOKEN ? { "x-api-token": process.env.API_TOKEN } : {};
+}
+
 /** Shape of GET /health in backend/app.py. */
 type HealthPayload = {
   status: string;
@@ -81,6 +86,7 @@ export async function segmentImage(
   try {
     const res = await fetch(`${API_URL}/segment`, {
       method: "POST",
+      headers: backendHeaders(),
       body: form,
       cache: "no-store",
       signal: AbortSignal.timeout(55_000),
@@ -123,4 +129,49 @@ export async function fetchWeather(
   } catch (error) {
     return networkError(error);
   }
+}
+
+/** A garment as the stylist sees it. */
+export type StylistItem = { id: string; label: string; colors: string[] };
+
+export type SoloOutfit = { title: string; item_ids: string[]; reasoning: string; missing: string | null };
+
+export type MatchedOutfits = {
+  title: string;
+  theme: string;
+  you: { item_ids: string[]; reasoning: string };
+  friend: { item_ids: string[]; reasoning: string };
+};
+
+async function postStylist<T>(path: string, body: unknown): Promise<{ ok: true; data: T } | ApiError> {
+  try {
+    const res = await fetch(`${API_URL}${path}`, {
+      method: "POST",
+      headers: { "content-type": "application/json", ...backendHeaders() },
+      body: JSON.stringify(body),
+      cache: "no-store",
+      // Gemini answers in ~2 s; allow for a cold Space and a model fallback.
+      signal: AbortSignal.timeout(55_000),
+    });
+    if (!res.ok) return readError(res);
+    return { ok: true, data: (await res.json()) as T };
+  } catch (error) {
+    return networkError(error);
+  }
+}
+
+/** One outfit from the user's wardrobe (POST /outfit, Gemini on the backend). */
+export function requestOutfit(body: { wardrobe: StylistItem[]; notes: string; weather: string | null }) {
+  return postStylist<SoloOutfit>("/outfit", body);
+}
+
+/** Coordinated outfits for the user and a friend (POST /outfit/match). */
+export function requestMatchedOutfits(body: {
+  you: StylistItem[];
+  friend: StylistItem[];
+  friend_name: string;
+  notes: string;
+  weather: string | null;
+}) {
+  return postStylist<MatchedOutfits>("/outfit/match", body);
 }
