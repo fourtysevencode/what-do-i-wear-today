@@ -3,3 +3,7 @@ pydantic
 uvicorn
 opencv-python
 matplotlib
+numpy
+ultralytics
+onnxruntime
+python-multipart
