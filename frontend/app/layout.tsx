@@ -18,6 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://wardrobe.ronakbuilds.tech"),
   title: "What do I wear today?",
   description:
     "Photograph the clothes you own. Get outfits for the weather and your plans, built only from your own wardrobe.",
