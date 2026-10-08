@@ -10,7 +10,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-heading: var(--font-bricolage), var(--font-geist), sans-serif;
+  --font-heading: var(--font-outfit), var(--font-geist), sans-serif;
   --color-pop: var(--pop);
   --color-pop-foreground: var(--pop-foreground);
   --color-print: var(--print);
@@ -208,12 +208,11 @@
   }
 }
 
-/* Display type: Bricolage, slightly condensed, tight. */
+/* Display type: Outfit, heavy and tightly tracked. */
 @utility type-display {
   font-family: var(--font-heading);
-  font-stretch: 88%;
   font-weight: 700;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.04em;
   line-height: 0.95;
   text-wrap: balance;
 }
