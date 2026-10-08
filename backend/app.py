@@ -63,7 +63,7 @@ def health_status():
     return {
         "status" : "up!",
         "uptime" : f"{get_uptime()}s",
-        "version" : "Pre Alpha",
+        "version" : "Public Beta",
         "message" : random.choice(MESSAGES)
     }
 
