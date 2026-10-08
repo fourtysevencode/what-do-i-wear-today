@@ -13,12 +13,13 @@ type CreateUserResult =
   | { ok: true; user: { id: string; username: string } }
   | { ok: false; reason: "username_taken" };
 
+/** Creates an account. Only called once the user has agreed to the Terms and Privacy Policy. */
 export async function createUser(username: string, password: string): Promise<CreateUserResult> {
   const passwordHash = await bcrypt.hash(password, BCRYPT_COST);
   try {
     const rows = await sql()`
-      insert into users (username, password_hash)
-      values (${username}, ${passwordHash})
+      insert into users (username, password_hash, terms_accepted_at)
+      values (${username}, ${passwordHash}, now())
       returning id, username
     `;
     return { ok: true, user: rows[0] as { id: string; username: string } };

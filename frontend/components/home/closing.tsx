@@ -40,7 +40,7 @@ export function SiteFooter() {
     <footer className="mx-auto flex max-w-7xl flex-col gap-4 px-4 pb-10 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
       <Wordmark />
       <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
-        <nav aria-label="Footer" className="flex gap-6">
+        <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-3">
           <Link href="/#how" className="rounded-sm transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
             How It Works
           </Link>
@@ -49,6 +49,12 @@ export function SiteFooter() {
           </Link>
           <Link href="/status" className="rounded-sm transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
             API Status
+          </Link>
+          <Link href="/privacy" className="rounded-sm transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+            Privacy
+          </Link>
+          <Link href="/terms" className="rounded-sm transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+            Terms
           </Link>
         </nav>
         <ThemeToggle />

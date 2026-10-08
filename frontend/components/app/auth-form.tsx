@@ -9,6 +9,9 @@ import { buttonPrimary, fieldError, input, label } from "@/components/app/styles
 import { Turnstile } from "@/components/app/turnstile";
 import { cn } from "@/lib/utils";
 
+const inlineLink =
+  "rounded-sm font-medium text-foreground underline decoration-foreground/25 underline-offset-4 hover:decoration-pop focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none";
+
 type AuthFormProps = {
   mode: "login" | "signup";
   action: (state: AuthState, formData: FormData) => Promise<AuthState>;
@@ -24,6 +27,7 @@ export function AuthForm({ mode, action }: AuthFormProps) {
   const text = copy[mode];
   const usernameError = state?.fieldErrors?.username?.[0];
   const passwordError = state?.fieldErrors?.password?.[0];
+  const termsError = state?.fieldErrors?.terms?.[0];
 
   return (
     <form action={formAction} noValidate className="mt-8 flex flex-col gap-5">
@@ -93,6 +97,38 @@ export function AuthForm({ mode, action }: AuthFormProps) {
           )
         )}
       </div>
+
+      {mode === "signup" && (
+        <div className="flex flex-col gap-2">
+          <div className="flex items-start gap-3">
+            <input
+              id="terms"
+              name="terms"
+              type="checkbox"
+              required
+              aria-invalid={termsError ? true : undefined}
+              aria-describedby={termsError ? "terms-error" : undefined}
+              className="mt-0.5 size-5 shrink-0 cursor-pointer rounded-md accent-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
+            />
+            <label htmlFor="terms" className="text-sm leading-relaxed text-muted-foreground">
+              I agree to the{" "}
+              <Link href="/terms" target="_blank" className={inlineLink}>
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy" target="_blank" className={inlineLink}>
+                Privacy Policy
+              </Link>
+              .
+            </label>
+          </div>
+          {termsError && (
+            <p id="terms-error" className={fieldError}>
+              {termsError}
+            </p>
+          )}
+        </div>
+      )}
 
       {mode === "signup" && <Turnstile resetKey={state} />}
 

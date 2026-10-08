@@ -13,6 +13,9 @@ create table if not exists users (
 -- Existing databases: sign-up no longer collects an email.
 alter table users alter column email drop not null;
 
+-- When the user agreed to the Terms of Service and Privacy Policy at sign-up (null for older accounts).
+alter table users add column if not exists terms_accepted_at timestamptz;
+
 create table if not exists garments (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references users (id) on delete cascade,

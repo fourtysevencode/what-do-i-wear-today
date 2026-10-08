@@ -10,7 +10,7 @@ import { createUser, USERNAME_PATTERN, verifyCredentials } from "@/lib/users";
 export type AuthState =
   | {
       error?: string;
-      fieldErrors?: { username?: string[]; password?: string[] };
+      fieldErrors?: { username?: string[]; password?: string[]; terms?: string[] };
       username?: string;
     }
   | undefined;
@@ -36,6 +36,8 @@ const signupSchema = z.object({
       ),
   ),
   password: z.string().min(6, "Use at least 6 characters.").max(128, "Use 128 characters or fewer."),
+  // The checkbox only submits a value when ticked.
+  terms: z.literal("on", { error: "Agree to the Terms of Service and Privacy Policy to continue." }),
 });
 
 async function startSession(userId: string) {
