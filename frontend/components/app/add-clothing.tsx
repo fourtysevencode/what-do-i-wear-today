@@ -1,10 +1,11 @@
 "use client";
 
-import { CircleNotchIcon, PlusIcon } from "@phosphor-icons/react/dist/ssr";
+import { CameraIcon, CircleNotchIcon, PlusIcon } from "@phosphor-icons/react/dist/ssr";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 
-import { buttonPrimary } from "@/components/app/styles";
+import { CameraCapture } from "@/components/app/camera-capture";
+import { buttonPrimary, buttonSecondary } from "@/components/app/styles";
 
 const MAX_EDGE = 1600; // px; plenty for segmentation, keeps uploads around 0.3 to 1 MB
 
@@ -15,8 +16,8 @@ type Status =
   | { kind: "error"; message: string };
 
 /** Downscale in the browser so uploads stay well under Vercel's 4.5 MB request limit. */
-async function shrink(file: File): Promise<Blob> {
-  const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+async function shrink(image: Blob): Promise<Blob> {
+  const bitmap = await createImageBitmap(image, { imageOrientation: "from-image" });
   const scale = Math.min(1, MAX_EDGE / Math.max(bitmap.width, bitmap.height));
   const canvas = document.createElement("canvas");
   canvas.width = Math.round(bitmap.width * scale);
@@ -32,6 +33,7 @@ export function AddClothing() {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
+  const [cameraOpen, setCameraOpen] = useState(false);
   const [slow, setSlow] = useState(false);
   const [refreshing, startRefresh] = useTransition();
   const working = status.kind === "working" || refreshing;
@@ -46,7 +48,8 @@ export function AddClothing() {
     };
   }, [status]);
 
-  async function upload(file: File) {
+  /** Picked file or camera shot: both go through the same shrink + upload. */
+  async function upload(file: Blob) {
     setStatus({ kind: "working" });
     try {
       let photo: Blob;
@@ -86,19 +89,31 @@ export function AddClothing() {
           if (file) void upload(file);
         }}
       />
-      <button
-        type="button"
-        onClick={() => inputRef.current?.click()}
-        disabled={working}
-        className={buttonPrimary}
-      >
-        {working ? (
-          <CircleNotchIcon aria-hidden="true" className="size-4 animate-spin motion-reduce:animate-none" />
-        ) : (
-          <PlusIcon aria-hidden="true" className="size-4" weight="bold" />
-        )}
-        {working ? "Adding…" : "Add Clothing"}
-      </button>
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => setCameraOpen(true)}
+          disabled={working}
+          className={buttonSecondary}
+        >
+          <CameraIcon aria-hidden="true" className="size-4" />
+          Take Photo
+        </button>
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={working}
+          className={buttonPrimary}
+        >
+          {working ? (
+            <CircleNotchIcon aria-hidden="true" className="size-4 animate-spin motion-reduce:animate-none" />
+          ) : (
+            <PlusIcon aria-hidden="true" className="size-4" weight="bold" />
+          )}
+          {working ? "Adding…" : "Add Clothing"}
+        </button>
+      </div>
+      <CameraCapture open={cameraOpen} onClose={() => setCameraOpen(false)} onCapture={(photo) => void upload(photo)} />
 
       <p aria-live="polite" className="max-w-xs text-sm text-pretty text-muted-foreground sm:text-right">
         {status.kind === "working" &&
