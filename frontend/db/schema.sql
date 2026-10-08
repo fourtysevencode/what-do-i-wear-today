@@ -3,12 +3,15 @@
 
 create table if not exists users (
   id uuid primary key default gen_random_uuid(),
-  -- Free text for now ("test" is a valid login); unique, stored lowercase.
-  email text not null unique,
+  -- Optional: sign-up is username + password. Unique when present.
+  email text unique,
   username text not null unique,
   password_hash text not null,
   created_at timestamptz not null default now()
 );
+
+-- Existing databases: sign-up no longer collects an email.
+alter table users alter column email drop not null;
 
 create table if not exists garments (
   id uuid primary key default gen_random_uuid(),

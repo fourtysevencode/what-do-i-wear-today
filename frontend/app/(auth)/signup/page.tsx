@@ -10,7 +10,7 @@ export default function SignupPage() {
     <>
       <h1 className="type-display text-4xl sm:text-5xl">Start your wardrobe.</h1>
       <p className="mt-3 text-pretty text-muted-foreground">
-        Create an account to save your clothes and plan outfits with friends.
+        Pick a username and password to save your clothes and plan outfits with friends.
       </p>
       <AuthForm mode="signup" action={signup} />
     </>

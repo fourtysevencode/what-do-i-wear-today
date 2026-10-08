@@ -5,6 +5,7 @@ import { useActionState } from "react";
 
 import type { AuthState } from "@/app/(auth)/actions";
 import { buttonPrimary, fieldError, input, label } from "@/components/app/styles";
+import { cn } from "@/lib/utils";
 
 type AuthFormProps = {
   mode: "login" | "signup";
@@ -19,33 +20,47 @@ const copy = {
 export function AuthForm({ mode, action }: AuthFormProps) {
   const [state, formAction, pending] = useActionState(action, undefined);
   const text = copy[mode];
-  const emailError = state?.fieldErrors?.email?.[0];
+  const usernameError = state?.fieldErrors?.username?.[0];
   const passwordError = state?.fieldErrors?.password?.[0];
 
   return (
     <form action={formAction} noValidate className="mt-8 flex flex-col gap-5">
       <div className="flex flex-col gap-2">
-        <label htmlFor="email" className={label}>
-          Email
+        <label htmlFor="username" className={label}>
+          Username
         </label>
-        <input
-          id="email"
-          name="email"
-          type="text"
-          inputMode="email"
-          autoComplete={mode === "login" ? "username" : "email"}
-          autoCapitalize="none"
-          spellCheck={false}
-          required
-          defaultValue={state?.email}
-          aria-invalid={emailError ? true : undefined}
-          aria-describedby={emailError ? "email-error" : undefined}
-          className={input}
-        />
-        {emailError && (
-          <p id="email-error" className={fieldError}>
-            {emailError}
+        <div className="relative">
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-muted-foreground"
+          >
+            @
+          </span>
+          <input
+            id="username"
+            name="username"
+            type="text"
+            autoComplete="username"
+            autoCapitalize="none"
+            spellCheck={false}
+            required
+            maxLength={24}
+            defaultValue={state?.username}
+            aria-invalid={usernameError ? true : undefined}
+            aria-describedby={usernameError ? "username-error" : mode === "signup" ? "username-help" : undefined}
+            className={cn(input, "pl-8")}
+          />
+        </div>
+        {usernameError ? (
+          <p id="username-error" className={fieldError}>
+            {usernameError}
           </p>
+        ) : (
+          mode === "signup" && (
+            <p id="username-help" className="text-sm text-muted-foreground">
+              Friends use this to find you. Letters, numbers, dots, dashes or underscores.
+            </p>
+          )
         )}
       </div>
 
