@@ -1,6 +1,9 @@
 # What Do I Wear Today?
 > Ever took hours to decide what to wear? So did I. Thats why this exists! Simply uploada a picture of your wardrobe (Mirror selfies, your clothes laid out over your bed, etc) and create a digital wardrobe which you can build outfits with AI based on the temperature and activity you got planned, or try building matching fits with your friends. [Try it out here!](https://wardrobe.ronakbuilds.tech/)
 
+<img src="docs/preview.gif" alt="Demo GIF" width="600">
+
+
 ---
 
 ## Architecture
