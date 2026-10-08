@@ -47,13 +47,13 @@ export function OutfitPieces({ pieces, compact = false }: OutfitPiecesProps) {
         ))}
       </ul>
 
-      {/* Top to toe: each piece tucks slightly under the one above, like it's being worn. */}
-      <ol aria-label="Outfit, as worn" className="hidden flex-col items-center pb-2 group-data-[view=stacked]/view:flex">
+      {/* Top to toe in a single column, the order it's worn; pieces never overlap. */}
+      <ol aria-label="Outfit, as worn" className="hidden flex-col items-center gap-5 pb-2 group-data-[view=stacked]/view:flex">
         {worn.map((piece, i) => (
           <li
             key={piece.id}
-            className={cn("relative rotate-(--tilt)", compact ? "w-[min(12rem,78%)]" : "w-[min(15rem,70%)]", i > 0 && "-mt-[14%]")}
-            style={{ zIndex: worn.length - i, "--tilt": i % 2 ? "1.5deg" : "-1.5deg" } as CSSProperties}
+            className={cn("rotate-(--tilt)", compact ? "w-[min(12rem,78%)]" : "w-[min(15rem,70%)]")}
+            style={{ "--tilt": i % 2 ? "1deg" : "-1deg" } as CSSProperties}
           >
             <GarmentPrint
               garment={{ name: displayName(piece.label), kind: kindOf(piece.label) }}

@@ -133,16 +133,16 @@ export function OutfitPicker() {
             </p>
 
             {/* Keyed by plan so the prints re-enter on every change. Grid by default;
-                "Stacked" shows top over bottom, the way it's worn. */}
+                "Stacked" shows top above bottom, the way it's worn. */}
             <div
               key={plan.id}
-              className="mx-auto mt-6 grid max-w-[30rem] grid-cols-2 gap-4 md:gap-6 group-data-[view=stacked]/view:max-w-[15rem] group-data-[view=stacked]/view:grid-cols-1 group-data-[view=stacked]/view:gap-0"
+              className="mx-auto mt-6 grid max-w-[30rem] grid-cols-2 gap-4 md:gap-6 group-data-[view=stacked]/view:max-w-[15rem] group-data-[view=stacked]/view:grid-cols-1 group-data-[view=stacked]/view:gap-5"
             >
               {[plan.top, plan.bottom].map((garment, i) => (
                 <GarmentPrint
                   key={garment.name}
                   garment={garment}
-                  className={`animate-swap md:rotate-(--tilt) ${i === 0 ? "relative z-10" : "group-data-[view=stacked]/view:-mt-[14%]"}`}
+                  className="animate-swap md:rotate-(--tilt)"
                   style={
                     {
                       "--tilt": i === 0 ? "-2deg" : "2.5deg",
