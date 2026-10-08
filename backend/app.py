@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 import time
 import random
+from services.pipeline import analyze_outfit
 
 MESSAGES = [
     "Maybe take a sip of water?",
@@ -28,5 +29,5 @@ def health_status():
 
 @app.post("/segment")
 def segment_image():
-    # TODO once the segmentation model is ready.
+    
     return {}
