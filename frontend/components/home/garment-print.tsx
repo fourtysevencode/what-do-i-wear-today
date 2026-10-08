@@ -11,9 +11,11 @@ const swatchClass: Record<Swatch, string> = {
 };
 
 type GarmentPrintProps = {
-  garment: { name: string; kind: string; swatch?: Swatch };
-  /** The cutout image. Without it, a tinted block stands in for the photo. */
+  garment: { name: string; kind: string; swatch?: Swatch; photo?: { src: string; position?: string } };
+  /** The cutout image. Without it, the garment's photo (or a tinted block) stands in. */
   src?: string;
+  /** Load straight away instead of lazily (for prints in the first screen). */
+  eager?: boolean;
   showCaption?: boolean;
   className?: string;
   style?: CSSProperties;
@@ -26,6 +28,7 @@ type GarmentPrintProps = {
 export function GarmentPrint({
   garment,
   src,
+  eager = false,
   showCaption = true,
   className,
   style,
@@ -49,6 +52,23 @@ export function GarmentPrint({
             loading="lazy"
             decoding="async"
             className="absolute inset-0 size-full object-contain p-[8%] drop-shadow-[0_10px_12px_oklch(0.25_0.05_320/0.22)]"
+          />
+        </div>
+      ) : garment.photo ? (
+        <div
+          className={cn(
+            "relative aspect-4/5 overflow-hidden rounded-[calc(var(--radius-print)-0.5rem)]",
+            swatchClass[garment.swatch ?? "peach"],
+          )}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={garment.photo.src}
+            alt=""
+            loading={eager ? "eager" : "lazy"}
+            decoding="async"
+            className="absolute inset-0 size-full object-cover"
+            style={{ objectPosition: garment.photo.position }}
           />
         </div>
       ) : (

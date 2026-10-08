@@ -4,9 +4,9 @@ import type { CSSProperties } from "react";
 import { GarmentPrint } from "@/components/home/garment-print";
 import {
   buttonDown,
-  printedCami,
+  floralBlouse,
   trousers,
-  wideLegJeans,
+  darkJeans,
   type Garment,
 } from "@/lib/wardrobe";
 
@@ -54,7 +54,7 @@ export function Friends() {
           </span>
           <p className="text-sm font-medium md:max-w-[9ch] md:text-center">Day trip, Saturday</p>
         </div>
-        <ClosetPanel owner="Ishita" outfit={[printedCami, wideLegJeans]} />
+        <ClosetPanel owner="Ishita" outfit={[floralBlouse, darkJeans]} />
       </div>
 
       <p className="reveal mx-auto mt-10 max-w-[48ch] text-center text-pretty text-muted-foreground">

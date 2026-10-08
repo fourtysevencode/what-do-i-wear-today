@@ -5,9 +5,9 @@ import { GarmentPrint } from "@/components/home/garment-print";
 import { cn } from "@/lib/utils";
 import {
   buttonDown,
-  printedCami,
+  floralBlouse,
   trousers,
-  wideLegJeans,
+  darkJeans,
   type Garment,
 } from "@/lib/wardrobe";
 
@@ -20,20 +20,21 @@ type Placement = {
   layer: string;
 };
 
-// Collage coordinates for md and up, as % of the board. Below md the
-// prints fall back to a plain 2x2 grid with no tilt or overlap.
+// Collage coordinates for md and up, as % of the board: two columns of equal prints,
+// the right one dropped a little, with a small gap so nothing overlaps. Below md the
+// prints fall back to a plain 2x2 grid with no tilt.
 const placements: Placement[] = [
-  { garment: buttonDown, left: "1%", top: "2%", width: "48%", tilt: "-4deg", layer: "z-30" },
-  { garment: trousers, left: "57%", top: "9%", width: "38%", tilt: "3.5deg", layer: "z-10" },
-  { garment: wideLegJeans, left: "9%", top: "57%", width: "31%", tilt: "5deg", layer: "z-20" },
-  { garment: printedCami, left: "54%", top: "56%", width: "33%", tilt: "-3deg", layer: "z-20" },
+  { garment: buttonDown, left: "3%", top: "1%", width: "43%", tilt: "-3deg", layer: "z-20" },
+  { garment: trousers, left: "54%", top: "8%", width: "43%", tilt: "2.5deg", layer: "z-10" },
+  { garment: darkJeans, left: "3%", top: "51%", width: "43%", tilt: "2deg", layer: "z-20" },
+  { garment: floralBlouse, left: "54%", top: "58%", width: "43%", tilt: "-2.5deg", layer: "z-10" },
 ];
 
 function HeroCollage({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "isolate grid w-full grid-cols-2 gap-3 md:relative md:mx-auto md:block md:aspect-10/11 md:max-w-[560px] lg:mr-0",
+        "isolate grid w-full grid-cols-2 gap-3 md:relative md:mx-auto md:block md:aspect-[10/13] md:max-w-[520px] lg:mr-0",
         className,
       )}
     >
@@ -41,6 +42,7 @@ function HeroCollage({ className }: { className?: string }) {
         <GarmentPrint
           key={garment.name}
           garment={garment}
+          eager
           className={cn(
             "animate-print transition-[rotate,translate] duration-500 ease-spring hover:z-40 hover:-translate-y-1.5 md:absolute md:top-(--top) md:left-(--left) md:w-(--width) md:rotate-(--tilt) md:hover:rotate-0",
             layer,

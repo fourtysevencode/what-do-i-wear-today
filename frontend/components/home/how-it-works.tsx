@@ -58,10 +58,17 @@ export function HowItWorks() {
                 key={garment.name}
                 className="relative w-[36%] shrink-0 snap-start border-t-2 border-foreground/15 pt-4 pr-3 before:absolute before:top-0 before:left-[calc(50%-0.375rem)] before:h-4 before:w-px before:bg-foreground/25"
               >
-                <div
-                  aria-hidden="true"
-                  className={cn("aspect-3/4 rounded-[0.75rem]", rackSwatch[garment.swatch])}
-                />
+                <div className={cn("relative aspect-3/4 overflow-hidden rounded-[0.75rem]", rackSwatch[garment.swatch])}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={garment.photo.src}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 size-full object-cover"
+                    style={{ objectPosition: garment.photo.position }}
+                  />
+                </div>
                 <p className="mt-2 truncate text-[13px] font-medium">{garment.name}</p>
               </li>
             ))}

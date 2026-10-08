@@ -14,9 +14,9 @@ import { OutfitViewArea, OutfitViewToggle } from "@/components/app/outfit-view-m
 import { GarmentPrint } from "@/components/home/garment-print";
 import {
   buttonDown,
-  printedCami,
+  floralBlouse,
   trousers,
-  wideLegJeans,
+  darkJeans,
   type Garment,
 } from "@/lib/wardrobe";
 
@@ -39,9 +39,9 @@ const plans: Plan[] = [
     when: "Tomorrow",
     forecast: "27°C and sunny",
     icon: SunIcon,
-    top: printedCami,
-    bottom: wideLegJeans,
-    why: "A light top for the heat, and loose denim so the whole thing stays relaxed.",
+    top: floralBlouse,
+    bottom: darkJeans,
+    why: "A light, airy blouse for the heat, and dark denim so the whole thing stays relaxed.",
   },
   {
     id: "office",
@@ -59,9 +59,9 @@ const plans: Plan[] = [
     when: "Friday night",
     forecast: "19°C and clear",
     icon: MoonIcon,
-    top: printedCami,
+    top: floralBlouse,
     bottom: trousers,
-    why: "Print on top, plain dark trousers below. A step up from denim without trying too hard.",
+    why: "Print on top, dark trousers below. A step up from denim without trying too hard.",
   },
   {
     id: "errands",
@@ -70,8 +70,8 @@ const plans: Plan[] = [
     forecast: "23°C and breezy",
     icon: WindIcon,
     top: buttonDown,
-    bottom: wideLegJeans,
-    why: "Blue on blue, sleeves rolled, shirt untucked. Easy to button up if the wind picks up.",
+    bottom: darkJeans,
+    why: "White shirt, dark denim, sleeves rolled. Easy to button up if the wind picks up.",
   },
 ];
 
