@@ -33,14 +33,24 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const garments = await createGarments(
-    user.id,
-    result.items.map((item) => ({
-      label: item.label,
-      confidence: item.confidence,
-      colors: item.colors,
-      png: Buffer.from(item.image, "base64"),
-    })),
-  );
-  return NextResponse.json({ garments }, { status: 201 });
+  try {
+    const garments = await createGarments(
+      user.id,
+      result.items.map((item) => ({
+        label: item.label,
+        confidence: item.confidence,
+        colors: item.colors,
+        png: Buffer.from(item.image, "base64"),
+      })),
+    );
+    return NextResponse.json({ garments }, { status: 201 });
+  } catch (error) {
+    // Storage or database failed after segmentation. Log the details, and return only
+    // the error type (never config values) so the cause is visible from the browser.
+    console.error("[api/garments] saving cutouts failed:", error);
+    const code = (error as { Code?: string; name?: string }).Code ?? (error as Error).name ?? "Error";
+    const message = (error as Error).message ?? "";
+    const reason = message.includes("must be set") ? message : code;
+    return NextResponse.json({ error: `Couldn't save your clothes (${reason}). Try again.` }, { status: 500 });
+  }
 }
