@@ -42,3 +42,9 @@ pnpm-debug.log*
 
 # runs
 runs/
+
+# AI agent tooling (local skills, assistant config)
+.agents/
+.aider-desk/
+.claude/
+skills-lock.json
