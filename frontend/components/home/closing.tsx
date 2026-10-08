@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { PrimaryCta } from "@/components/home/cta";
 import { Wordmark } from "@/components/home/site-header";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const REPO_URL = "https://github.com/fourtysevencode/what-do-i-wear-today";
 
@@ -30,17 +31,20 @@ export function SiteFooter() {
   return (
     <footer className="mx-auto flex max-w-7xl flex-col gap-4 px-4 pb-10 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
       <Wordmark />
-      <nav aria-label="Footer" className="flex gap-6">
-        <Link href="/#how" className="rounded-sm transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
-          How It Works
-        </Link>
-        <Link href="/#friends" className="rounded-sm transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
-          With Friends
-        </Link>
-        <Link href="/status" className="rounded-sm transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
-          API Status
-        </Link>
-      </nav>
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
+        <nav aria-label="Footer" className="flex gap-6">
+          <Link href="/#how" className="rounded-sm transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+            How It Works
+          </Link>
+          <Link href="/#friends" className="rounded-sm transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+            With Friends
+          </Link>
+          <Link href="/status" className="rounded-sm transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+            API Status
+          </Link>
+        </nav>
+        <ThemeToggle />
+      </div>
     </footer>
   );
 }

@@ -24,10 +24,16 @@ export function SiteHeader() {
         <nav aria-label="Primary" className="flex items-center gap-1">
           <SectionNav />
           <Link
-            href="/#outfit"
-            className="ml-2 inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-medium whitespace-nowrap text-primary-foreground transition-[background-color,scale] duration-300 ease-soft hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none active:scale-[0.98]"
+            href="/login"
+            className="ml-1 inline-flex rounded-full px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors hover:text-pop focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:px-4"
           >
-            Build an Outfit
+            Log In
+          </Link>
+          <Link
+            href="/signup"
+            className="inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-medium whitespace-nowrap text-primary-foreground transition-[background-color,scale] duration-300 ease-soft hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none active:scale-[0.98]"
+          >
+            Sign Up
           </Link>
         </nav>
       </div>

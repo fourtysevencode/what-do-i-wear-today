@@ -36,8 +36,21 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      // Smooth scrolling is set in globals.css; this tells Next to pause it during route changes.
+      data-scroll-behavior="smooth"
       className={`${outfit.variable} ${geist.variable} ${geistMono.variable} antialiased`}
+      // The script below may add data-theme before React hydrates.
+      suppressHydrationWarning
     >
+      <head>
+        {/* Apply a saved light/dark choice before first paint. No choice = follow the OS
+            (see components/theme-toggle.tsx). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`,
+          }}
+        />
+      </head>
       <body className="min-h-dvh">{children}</body>
     </html>
   );

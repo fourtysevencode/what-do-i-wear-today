@@ -1,20 +1,17 @@
-import os
-
 import cv2
 import numpy as np
 
 
-def segment(result, output_dir="runs/segment/cropped"):
+def segment(result):
     """
     Extract detected objects from a YOLO segmentation result
-    and save them as transparent PNG crops.
+    as transparent crops, kept in memory.
 
     Args:
         result: Ultralytics Results object.
-        output_dir: Directory where cropped images are saved.
 
     Returns:
-        List of saved image paths.
+        List of {"image": BGRA crop (np.ndarray), "label": class name, "confidence": float}.
     """
 
     if result.masks is None:
@@ -25,10 +22,10 @@ def segment(result, output_dir="runs/segment/cropped"):
 
     masks = result.masks.data.cpu().numpy()
     boxes = result.boxes.xyxy.cpu().numpy()
+    classes = result.boxes.cls.cpu().numpy().astype(int)
+    confidences = result.boxes.conf.cpu().numpy()
 
-    os.makedirs(output_dir, exist_ok=True)
-
-    saved_paths = []
+    crops = []
 
     for j, mask in enumerate(masks):
 
@@ -54,17 +51,17 @@ def segment(result, output_dir="runs/segment/cropped"):
         x2 = min(width, x2)
         y2 = min(height, y2)
 
+        # Skip degenerate boxes
+        if x2 <= x1 or y2 <= y1:
+            continue
+
         # Crop object
         cropped = transparent_image[y1:y2, x1:x2]
 
-        # Save as transparent PNG
-        output_path = os.path.join(
-            output_dir,
-            f"segmented_object_{j}_transparent.png",
-        )
+        crops.append({
+            "image": cropped,
+            "label": result.names[classes[j]],
+            "confidence": float(confidences[j]),
+        })
 
-        cv2.imwrite(output_path, cropped)
-
-        saved_paths.append(output_path)
-
-    return saved_paths
+    return crops

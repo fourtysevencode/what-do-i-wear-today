@@ -2,8 +2,20 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* Follow the OS theme. Tokens below swap under the same media query. */
-@custom-variant dark (@media (prefers-color-scheme: dark));
+/*
+ * Theme: follows the OS by default. A saved choice sets <html data-theme="light|dark">
+ * (see the inline script in app/layout.tsx), which overrides the OS either way.
+ */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) {
+      @slot;
+    }
+  }
+}
 
 @theme inline {
   --color-background: var(--background);
@@ -37,6 +49,7 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -91,6 +104,7 @@
   --accent: oklch(0.955 0.022 350);
   --accent-foreground: oklch(0.23 0.06 320);
   --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(1 0 0);
   --border: oklch(0.23 0.06 320 / 11%);
   --input: oklch(0.23 0.06 320 / 18%);
   --ring: oklch(0.52 0.17 318);
@@ -118,8 +132,9 @@
   color-scheme: light dark;
 }
 
+/* Keep these two dark blocks identical: OS-dark (unless forced light), and forced dark. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --background: oklch(0.165 0.03 320);
     --foreground: oklch(0.965 0.01 350);
     --card: oklch(0.21 0.04 320);
@@ -135,6 +150,7 @@
     --accent: oklch(0.245 0.045 320);
     --accent-foreground: oklch(0.965 0.01 350);
     --destructive: oklch(0.704 0.191 22.216);
+    --destructive-foreground: oklch(0.23 0.06 320);
     --border: oklch(0.965 0.01 350 / 10%);
     --input: oklch(0.965 0.01 350 / 16%);
     --ring: var(--orchid);
@@ -152,6 +168,49 @@
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.556 0 0);
   }
+}
+
+:root[data-theme="dark"] {
+  --background: oklch(0.165 0.03 320);
+  --foreground: oklch(0.965 0.01 350);
+  --card: oklch(0.21 0.04 320);
+  --card-foreground: oklch(0.965 0.01 350);
+  --popover: oklch(0.21 0.04 320);
+  --popover-foreground: oklch(0.965 0.01 350);
+  --primary: var(--orchid);
+  --primary-foreground: oklch(0.23 0.06 320);
+  --secondary: oklch(0.245 0.045 320);
+  --secondary-foreground: oklch(0.965 0.01 350);
+  --muted: oklch(0.245 0.045 320);
+  --muted-foreground: oklch(0.78 0.03 340);
+  --accent: oklch(0.245 0.045 320);
+  --accent-foreground: oklch(0.965 0.01 350);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.23 0.06 320);
+  --border: oklch(0.965 0.01 350 / 10%);
+  --input: oklch(0.965 0.01 350 / 16%);
+  --ring: var(--orchid);
+  --pop: var(--orchid);
+  --pop-foreground: oklch(0.23 0.06 320);
+  --print: oklch(0.255 0.045 320);
+  --print-foreground: oklch(0.965 0.01 350);
+  --shadow-tint: oklch(0.05 0.03 320 / 0.6);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 @layer base {
@@ -184,7 +243,7 @@
     z-index: 50;
     pointer-events: none;
     opacity: var(--grain-opacity);
-    mix-blend-mode: multiply;
+    mix-blend-mode: var(--grain-blend, multiply);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 }
@@ -194,12 +253,15 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --grain-opacity: 0.12;
+    --grain-blend: soft-light;
   }
-  body::after {
-    mix-blend-mode: soft-light;
-  }
+}
+
+:root[data-theme="dark"] {
+  --grain-opacity: 0.12;
+  --grain-blend: soft-light;
 }
 
 @media (prefers-reduced-transparency: reduce) {

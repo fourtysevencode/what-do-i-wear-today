@@ -81,7 +81,7 @@ export function Hero() {
           className="animate-rise mt-10 flex flex-wrap items-center gap-3"
           style={{ "--delay": "240ms" } as CSSProperties}
         >
-          <PrimaryCta href="#outfit">Build an Outfit</PrimaryCta>
+          <PrimaryCta href="/signup">Sign Up</PrimaryCta>
           <TextCta href="#how">How It Works</TextCta>
         </div>
       </div>

@@ -1,15 +1,17 @@
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from pathlib import Path
+from typing import Optional
+import base64
 import os
 import time
 import random
-import uuid
 
 import cv2
 import numpy as np
 
 from services.pipeline import analyze_outfit
+from services.weather import PlaceNotFound, WeatherUnavailable, geocode, get_weather
+from utils.colors import identify_colors
 
 MESSAGES = [
     "Maybe take a sip of water?",
@@ -18,8 +20,6 @@ MESSAGES = [
     "What are you doing here? :o",
     "Star this repo on github: https://github.com/fourtysevencode/what-do-i-wear-today"
 ]
-
-SEGMENTED_DIR = Path(__file__).resolve().parent / "runs" / "segmented"
 
 # Browser origins allowed to call the API: local Next.js dev plus the production site.
 # Override with a comma-separated ALLOWED_ORIGINS env var (e.g. a Space secret).
@@ -64,15 +64,45 @@ def segment_image(image: UploadFile = File(...)):
     if decoded is None:
         raise HTTPException(status_code=400, detail="couldn't read that as an image :(")
 
-    # Each request gets its own folder so crops don't overwrite each other
-    request_id = uuid.uuid4().hex
     try:
-        paths = analyze_outfit(decoded, str(SEGMENTED_DIR / request_id))
+        crops = analyze_outfit(decoded)
     except RuntimeError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+    # Crops come back in memory: send them as base64 PNGs so the caller stores them
+    items = []
+    for crop in crops:
+        ok, png = cv2.imencode(".png", crop["image"])
+        if not ok:
+            continue
+        items.append({
+            "label" : crop["label"],
+            "confidence" : round(crop["confidence"], 3),
+            "colors" : identify_colors(crop["image"]),
+            "image" : base64.b64encode(png.tobytes()).decode("ascii")
+        })
+
     return {
-        "id" : request_id,
-        "count" : len(paths),
-        "paths" : paths
+        "count" : len(items),
+        "items" : items
     }
+
+@app.get("/weather")
+def weather(
+    lat: Optional[float] = Query(None, ge=-90, le=90),
+    lon: Optional[float] = Query(None, ge=-180, le=180),
+    q: Optional[str] = Query(None, min_length=2, max_length=100),
+):
+    """Weather by place name (?q=Pune) or coordinates (?lat=18.52&lon=73.85)."""
+    if not q and (lat is None or lon is None):
+        raise HTTPException(status_code=400, detail="pass a place with ?q= or both ?lat= and ?lon=")
+
+    try:
+        if q:
+            place = geocode(q.strip())
+            return get_weather(place["latitude"], place["longitude"], label=place["label"])
+        return get_weather(lat, lon)
+    except PlaceNotFound:
+        raise HTTPException(status_code=404, detail=f"couldn't find a place called '{q}'")
+    except WeatherUnavailable as e:
+        raise HTTPException(status_code=502, detail=str(e))
