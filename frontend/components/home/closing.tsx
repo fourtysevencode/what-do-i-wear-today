@@ -37,6 +37,9 @@ export function SiteFooter() {
         <Link href="/#friends" className="rounded-sm transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
           With Friends
         </Link>
+        <Link href="/status" className="rounded-sm transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+          API Status
+        </Link>
       </nav>
     </footer>
   );

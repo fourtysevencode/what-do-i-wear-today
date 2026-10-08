@@ -1,5 +1,7 @@
 from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
+import os
 import time
 import random
 import uuid
@@ -19,11 +21,31 @@ MESSAGES = [
 
 SEGMENTED_DIR = Path(__file__).resolve().parent / "runs" / "segmented"
 
+# Browser origins allowed to call the API: local Next.js dev plus the production site.
+# Override with a comma-separated ALLOWED_ORIGINS env var (e.g. a Space secret).
+DEFAULT_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://wardrobe.ronakbuilds.tech",
+]
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get("ALLOWED_ORIGINS", ",".join(DEFAULT_ORIGINS)).split(",")
+    if origin.strip()
+]
+
 START_TIME = time.time()
 def get_uptime():
     return round(time.time() - START_TIME)
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/health")
