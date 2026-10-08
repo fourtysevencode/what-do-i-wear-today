@@ -5,7 +5,7 @@
 
 ## Architecture
 
-The project is split into `frontend/` and `backend/` directories splitting the deployment for both between vercel (frontend) and huggingface spaces via docker (backend).
+The project is split into `frontend/` and `backend/` directories splitting the deployment for both between **Vercel** (frontend) and **Huggingface Spaces via Docker** (backend).
 
 The complete working is demonstrated in the flowchart below:
 
