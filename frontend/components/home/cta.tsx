@@ -1,4 +1,5 @@
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowRightIcon, ArrowUpRightIcon } from "@phosphor-icons/react/dist/ssr";
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
@@ -10,13 +11,19 @@ type CtaProps = {
   href: string;
   children: ReactNode;
   className?: string;
+  external?: boolean;
 };
 
+const externalProps = { target: "_blank", rel: "noopener noreferrer" } as const;
+
 /** Pill with the arrow nested in its own circle (button-in-button). */
-export function PrimaryCta({ href, children, className }: CtaProps) {
+export function PrimaryCta({ href, children, className, external = false }: CtaProps) {
+  const Arrow = external ? ArrowUpRightIcon : ArrowRightIcon;
+  const Anchor = external ? "a" : Link;
   return (
-    <a
+    <Anchor
       href={href}
+      {...(external ? externalProps : {})}
       className={cn(
         "group inline-flex h-12 items-center gap-3 rounded-full bg-primary pr-1.5 pl-6 text-[15px] font-medium whitespace-nowrap text-primary-foreground transition-[background-color,scale] duration-300 ease-soft hover:bg-primary/90 active:scale-[0.98]",
         focusRing,
@@ -28,36 +35,28 @@ export function PrimaryCta({ href, children, className }: CtaProps) {
         aria-hidden="true"
         className="flex size-9 items-center justify-center rounded-full bg-primary-foreground/15 transition-[translate,scale] duration-500 ease-spring group-hover:translate-x-0.5 group-hover:scale-105"
       >
-        <ArrowRight className="size-4" strokeWidth={2} />
+        <Arrow className="size-4" weight="bold" />
       </span>
-    </a>
+    </Anchor>
   );
 }
 
-export function SecondaryCta({
-  href,
-  children,
-  className,
-  external = false,
-}: CtaProps & { external?: boolean }) {
+/** Tertiary text link, so the primary pill is the only filled control. */
+export function TextCta({ href, children, className }: Omit<CtaProps, "external">) {
   return (
-    <a
+    <Link
       href={href}
-      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       className={cn(
-        "group inline-flex h-12 items-center gap-2 rounded-full border border-foreground/15 px-6 text-[15px] font-medium whitespace-nowrap transition-[background-color,border-color,scale] duration-300 ease-soft hover:border-foreground/30 hover:bg-foreground/5 active:scale-[0.98]",
+        "group inline-flex h-12 items-center gap-1.5 rounded-full px-3 text-[15px] font-medium whitespace-nowrap underline decoration-foreground/25 underline-offset-[6px] transition-[text-decoration-color] duration-300 ease-soft hover:decoration-pop",
         focusRing,
         className,
       )}
     >
       {children}
-      {external && (
-        <ArrowUpRight
-          aria-hidden="true"
-          className="size-4 transition-transform duration-500 ease-spring group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-          strokeWidth={2}
-        />
-      )}
-    </a>
+      <ArrowRightIcon
+        aria-hidden="true"
+        className="size-4 transition-transform duration-500 ease-spring group-hover:translate-x-0.5"
+      />
+    </Link>
   );
 }

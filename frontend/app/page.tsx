@@ -21,7 +21,7 @@ export default function Home() {
         <section
           id="outfit"
           aria-label="Outfit demo"
-          className="mx-auto max-w-7xl scroll-mt-20 px-4 py-20 sm:px-6 md:py-28 lg:px-8"
+          className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-20 pb-24 sm:px-6 md:pt-24 md:pb-32 lg:px-8"
         >
           <OutfitPicker />
         </section>

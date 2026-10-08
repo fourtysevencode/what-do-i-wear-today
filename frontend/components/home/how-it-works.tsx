@@ -1,14 +1,17 @@
-import { CloudSun } from "lucide-react";
+import { CloudSunIcon } from "@phosphor-icons/react/dist/ssr";
 import type { CSSProperties } from "react";
 
 import { GarmentPrint } from "@/components/home/garment-print";
+import { cn } from "@/lib/utils";
 import { buttonDown, trousers, wardrobe } from "@/lib/wardrobe";
+
+const rackSwatch = { rose: "bg-rose", peach: "bg-peach", orchid: "bg-orchid" } as const;
 
 export function HowItWorks() {
   return (
     <section
       id="how"
-      className="mx-auto max-w-7xl scroll-mt-20 px-4 py-20 sm:px-6 md:py-28 lg:px-8"
+      className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-20 pb-24 sm:px-6 md:pt-24 md:pb-32 lg:px-8"
     >
       <h2 className="reveal type-display max-w-[16ch] text-4xl md:text-6xl">
         It starts with one mirror photo.
@@ -20,60 +23,58 @@ export function HowItWorks() {
           <h3 className="font-heading text-2xl font-semibold tracking-tight md:text-3xl">
             Every piece, cut out
           </h3>
-          <p className="mt-3 max-w-[40ch] leading-relaxed text-muted-foreground">
+          <p className="mt-3 max-w-[40ch] leading-relaxed text-pretty text-muted-foreground">
             The model finds each garment in your photo, lifts it off the
             background and names it.
           </p>
           <div className="mx-auto mt-10 grid max-w-[30rem] grid-cols-2 gap-5 md:gap-8">
             {[buttonDown, trousers].map((garment, i) => (
-              <div key={garment.name} className={i === 1 ? "md:mt-12" : undefined}>
-                <GarmentPrint
-                  garment={garment}
-                  showCaption={false}
-                  sizes="(min-width: 768px) 300px, 42vw"
-                  className="md:rotate-(--tilt)"
-                  style={{ "--tilt": i === 0 ? "-1.5deg" : "2deg" } as CSSProperties}
-                />
-                <p className="mt-4 text-center">
-                  <span className="sr-only">Detected as </span>
-                  <code translate="no" className="rounded-full border border-border bg-background px-3 py-1 font-mono text-xs text-muted-foreground">
-                    {garment.detectedAs}
-                  </code>
-                </p>
-              </div>
+              <GarmentPrint
+                key={garment.name}
+                garment={garment}
+                className={cn("md:rotate-(--tilt)", i === 1 && "md:mt-12")}
+                style={{ "--tilt": i === 0 ? "-1.5deg" : "2deg" } as CSSProperties}
+              />
             ))}
           </div>
         </article>
 
-        <article className="reveal rounded-(--radius-surface) bg-card p-6 ring-1 ring-border md:col-span-5 md:p-8">
+        <article className="reveal min-w-0 rounded-(--radius-surface) bg-card p-6 ring-1 ring-border md:col-span-5 md:p-8">
           <h3 className="font-heading text-2xl font-semibold tracking-tight">
             One rack for everything
           </h3>
-          <p className="mt-3 max-w-[42ch] leading-relaxed text-muted-foreground">
-            Tops and bottoms sit together on one screen, so nothing gets
+          <p className="mt-3 max-w-[42ch] leading-relaxed text-pretty text-muted-foreground">
+            Tops and bottoms hang together on one rail, so nothing gets
             forgotten at the back of the cupboard.
           </p>
-          <ul className="mt-8 grid grid-cols-4 gap-2.5" aria-label="Your wardrobe">
+          {/* A scroll-snap rail: pieces hang from a rod and slide sideways. */}
+          <ul
+            aria-label="Your wardrobe"
+            tabIndex={0}
+            className="-mx-6 mt-8 flex snap-x snap-mandatory overflow-x-auto scroll-px-6 px-6 pb-2 [scrollbar-width:none] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none md:-mx-8 md:scroll-px-8 md:px-8"
+          >
             {wardrobe.map((garment) => (
-              <li key={garment.name}>
-                <GarmentPrint
-                  garment={garment}
-                  showCaption={false}
-                  sizes="120px"
-                  className="rounded-[0.75rem] p-1 shadow-none ring-1 ring-border"
+              <li
+                key={garment.name}
+                className="relative w-[36%] shrink-0 snap-start border-t-2 border-foreground/15 pt-4 pr-3 before:absolute before:top-0 before:left-[calc(50%-0.375rem)] before:h-4 before:w-px before:bg-foreground/25"
+              >
+                <div
+                  aria-hidden="true"
+                  className={cn("aspect-3/4 rounded-[0.75rem]", rackSwatch[garment.swatch])}
                 />
+                <p className="mt-2 truncate text-[13px] font-medium">{garment.name}</p>
               </li>
             ))}
           </ul>
         </article>
 
-        <article className="reveal flex flex-col justify-between gap-10 rounded-(--radius-surface) bg-pop p-6 text-pop-foreground md:col-span-5 md:p-8">
-          <CloudSun aria-hidden="true" className="size-10" strokeWidth={1.5} />
+        <article className="reveal flex flex-col justify-between gap-10 rounded-(--radius-surface) bg-rose p-6 text-swatch-ink md:col-span-5 md:p-8">
+          <CloudSunIcon aria-hidden="true" className="size-10" weight="light" />
           <div>
             <h3 className="font-heading text-2xl font-semibold tracking-tight">
               Planned around your day
             </h3>
-            <p className="mt-3 max-w-[40ch] leading-relaxed">
+            <p className="mt-3 max-w-[40ch] leading-relaxed text-pretty">
               Suggestions check the forecast and where you are headed, from
               interviews to beach days.
             </p>

@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-import { PrimaryCta, SecondaryCta } from "@/components/home/cta";
+import { PrimaryCta, TextCta } from "@/components/home/cta";
 import { GarmentPrint } from "@/components/home/garment-print";
 import { cn } from "@/lib/utils";
 import {
@@ -25,8 +25,8 @@ type Placement = {
 const placements: Placement[] = [
   { garment: buttonDown, left: "1%", top: "2%", width: "48%", tilt: "-4deg", layer: "z-30" },
   { garment: trousers, left: "57%", top: "9%", width: "38%", tilt: "3.5deg", layer: "z-10" },
-  { garment: printedCami, left: "9%", top: "57%", width: "31%", tilt: "5deg", layer: "z-20" },
-  { garment: wideLegJeans, left: "54%", top: "56%", width: "33%", tilt: "-3deg", layer: "z-20" },
+  { garment: wideLegJeans, left: "9%", top: "57%", width: "31%", tilt: "5deg", layer: "z-20" },
+  { garment: printedCami, left: "54%", top: "56%", width: "33%", tilt: "-3deg", layer: "z-20" },
 ];
 
 function HeroCollage({ className }: { className?: string }) {
@@ -41,8 +41,6 @@ function HeroCollage({ className }: { className?: string }) {
         <GarmentPrint
           key={garment.name}
           garment={garment}
-          eager
-          sizes="(min-width: 768px) 270px, 45vw"
           className={cn(
             "animate-print transition-[rotate,translate] duration-500 ease-spring hover:z-40 hover:-translate-y-1.5 md:absolute md:top-(--top) md:left-(--left) md:w-(--width) md:rotate-(--tilt) md:hover:rotate-0",
             layer,
@@ -84,7 +82,7 @@ export function Hero() {
           style={{ "--delay": "240ms" } as CSSProperties}
         >
           <PrimaryCta href="#outfit">Build an Outfit</PrimaryCta>
-          <SecondaryCta href="#how">How It Works</SecondaryCta>
+          <TextCta href="#how">How It Works</TextCta>
         </div>
       </div>
       <HeroCollage className="lg:col-span-6" />

@@ -1,4 +1,4 @@
-import { Link2 } from "lucide-react";
+import { LinkSimpleIcon } from "@phosphor-icons/react/dist/ssr";
 import type { CSSProperties } from "react";
 
 import { GarmentPrint } from "@/components/home/garment-print";
@@ -10,20 +10,23 @@ import {
   type Garment,
 } from "@/lib/wardrobe";
 
+/** Top and bottom laid out like a flat-lay: overlapping, slightly askew. */
 function ClosetPanel({ owner, outfit }: { owner: string; outfit: [Garment, Garment] }) {
+  const [top, bottom] = outfit;
   return (
     <div className="reveal rounded-(--radius-surface) bg-secondary p-5 md:p-7">
       <p className="text-sm font-medium">{owner}</p>
-      <div className="mt-5 grid grid-cols-2 gap-3 md:gap-4">
-        {outfit.map((garment, i) => (
-          <GarmentPrint
-            key={garment.name}
-            garment={garment}
-            sizes="(min-width: 768px) 220px, 42vw"
-            className="md:rotate-(--tilt)"
-            style={{ "--tilt": i === 0 ? "-2deg" : "1.5deg" } as CSSProperties}
-          />
-        ))}
+      <div className="isolate mt-5 flex items-start">
+        <GarmentPrint
+          garment={top}
+          className="relative z-10 w-[56%] shrink-0 rotate-(--tilt)"
+          style={{ "--tilt": "-3deg" } as CSSProperties}
+        />
+        <GarmentPrint
+          garment={bottom}
+          className="-ml-[12%] mt-[18%] w-[56%] shrink-0 rotate-(--tilt)"
+          style={{ "--tilt": "2.5deg" } as CSSProperties}
+        />
       </div>
     </div>
   );
@@ -31,10 +34,13 @@ function ClosetPanel({ owner, outfit }: { owner: string; outfit: [Garment, Garme
 
 export function Friends() {
   return (
-    <section id="friends" className="mx-auto max-w-7xl scroll-mt-20 px-4 py-20 sm:px-6 md:py-28 lg:px-8">
+    <section
+      id="friends"
+      className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-20 pb-24 sm:px-6 md:pt-24 md:pb-32 lg:px-8"
+    >
       <div className="mx-auto max-w-3xl text-center">
         <h2 className="reveal type-display text-4xl md:text-6xl">Match outfits with friends.</h2>
-        <p className="reveal mx-auto mt-5 max-w-[50ch] text-lg leading-relaxed text-muted-foreground">
+        <p className="reveal mx-auto mt-5 max-w-[50ch] text-lg leading-relaxed text-pretty text-muted-foreground">
           Connect wardrobes for a trip or a party. The app matches outfits
           across both closets, using only what you each own.
         </p>
@@ -44,7 +50,7 @@ export function Friends() {
         <ClosetPanel owner="Your closet" outfit={[buttonDown, trousers]} />
         <div className="reveal flex flex-row items-center justify-center gap-3 md:flex-col">
           <span className="flex size-12 items-center justify-center rounded-full bg-pop text-pop-foreground">
-            <Link2 aria-hidden="true" className="size-5" strokeWidth={2} />
+            <LinkSimpleIcon aria-hidden="true" className="size-5" weight="bold" />
           </span>
           <p className="text-sm font-medium md:max-w-[9ch] md:text-center">Day trip, Saturday</p>
         </div>
@@ -52,7 +58,7 @@ export function Friends() {
       </div>
 
       <p className="reveal mx-auto mt-10 max-w-[48ch] text-center text-pretty text-muted-foreground">
-        The same two blues, swapped between top and bottom. Nothing new to buy.
+        Two outfits that work side by side, from two closets. Nothing new to buy.
       </p>
     </section>
   );

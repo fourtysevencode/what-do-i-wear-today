@@ -1,6 +1,13 @@
 "use client";
 
-import { ArrowRight, Cloud, Moon, Sun, Wind, type LucideIcon } from "lucide-react";
+import {
+  ArrowRightIcon,
+  CloudIcon,
+  MoonIcon,
+  SunIcon,
+  WindIcon,
+} from "@phosphor-icons/react/dist/ssr";
+import type { Icon } from "@phosphor-icons/react";
 import { useState, type CSSProperties } from "react";
 
 import { GarmentPrint } from "@/components/home/garment-print";
@@ -17,7 +24,7 @@ type Plan = {
   prompt: string;
   when: string;
   forecast: string;
-  icon: LucideIcon;
+  icon: Icon;
   top: Garment;
   bottom: Garment;
   why: string;
@@ -30,7 +37,7 @@ const plans: Plan[] = [
     prompt: "Something casual for tomorrow",
     when: "Tomorrow",
     forecast: "27°C and sunny",
-    icon: Sun,
+    icon: SunIcon,
     top: printedCami,
     bottom: wideLegJeans,
     why: "A light top for the heat, and loose denim so the whole thing stays relaxed.",
@@ -40,7 +47,7 @@ const plans: Plan[] = [
     prompt: "Office, but not too formal",
     when: "Monday",
     forecast: "21°C and overcast",
-    icon: Cloud,
+    icon: CloudIcon,
     top: buttonDown,
     bottom: trousers,
     why: "The button-down keeps it sharp. Roll the sleeves up once the meetings are done.",
@@ -50,7 +57,7 @@ const plans: Plan[] = [
     prompt: "Dinner with friends on Friday",
     when: "Friday night",
     forecast: "19°C and clear",
-    icon: Moon,
+    icon: MoonIcon,
     top: printedCami,
     bottom: trousers,
     why: "Print on top, plain dark trousers below. A step up from denim without trying too hard.",
@@ -60,7 +67,7 @@ const plans: Plan[] = [
     prompt: "Errands and coffee, nothing fussy",
     when: "Saturday",
     forecast: "23°C and breezy",
-    icon: Wind,
+    icon: WindIcon,
     top: buttonDown,
     bottom: wideLegJeans,
     why: "Blue on blue, sleeves rolled, shirt untucked. Easy to button up if the wind picks up.",
@@ -98,7 +105,7 @@ export function OutfitPicker() {
                   className="sr-only"
                 />
                 <span>“{p.prompt}”</span>
-                <ArrowRight
+                <ArrowRightIcon
                   aria-hidden="true"
                   className="size-4 shrink-0 -translate-x-1 opacity-0 transition-[opacity,translate] duration-300 ease-soft group-has-checked:translate-x-0 group-has-checked:opacity-100"
                 />
@@ -114,7 +121,7 @@ export function OutfitPicker() {
           <div className="rounded-[calc(var(--radius-surface)-0.5rem)] bg-card p-5 shadow-print md:p-8">
             <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-sm">
               <p className="flex items-center gap-2 font-medium">
-                <WeatherIcon aria-hidden="true" className="size-5 text-pop" strokeWidth={1.75} />
+                <WeatherIcon aria-hidden="true" className="size-5 text-pop" />
                 {plan.when}, {plan.forecast}
               </p>
               <p className="text-muted-foreground">From your closet</p>
@@ -125,13 +132,11 @@ export function OutfitPicker() {
             </p>
 
             {/* Keyed by plan so the prints re-enter on every change. */}
-            {/* Capped so the small cutouts are never stretched far past their pixels. */}
             <div key={plan.id} className="mx-auto mt-6 grid max-w-[30rem] grid-cols-2 gap-4 md:gap-6">
               {[plan.top, plan.bottom].map((garment, i) => (
                 <GarmentPrint
                   key={garment.name}
                   garment={garment}
-                  sizes="(min-width: 1024px) 300px, 42vw"
                   className="animate-swap md:rotate-(--tilt)"
                   style={
                     {

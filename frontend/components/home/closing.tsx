@@ -1,4 +1,6 @@
-import { PrimaryCta, SecondaryCta } from "@/components/home/cta";
+import Link from "next/link";
+
+import { PrimaryCta } from "@/components/home/cta";
 import { Wordmark } from "@/components/home/site-header";
 
 const REPO_URL = "https://github.com/fourtysevencode/what-do-i-wear-today";
@@ -10,14 +12,14 @@ export function Closing() {
         <h2 className="reveal type-display text-5xl sm:text-7xl lg:text-8xl">
           What do I wear <span className="text-pop">today?</span>
         </h2>
-        <p className="reveal mt-6 max-w-[40ch] text-lg leading-relaxed text-muted-foreground md:text-xl">
-          Ask the closet you already have.
+        <p className="reveal mt-6 max-w-[40ch] text-lg leading-relaxed text-pretty text-muted-foreground md:text-xl">
+          The app is in early development. Follow along on GitHub, or help
+          build it.
         </p>
-        <div className="reveal mt-10 flex flex-wrap items-center gap-3">
-          <PrimaryCta href="#outfit">Build an Outfit</PrimaryCta>
-          <SecondaryCta href={REPO_URL} external>
+        <div className="reveal mt-10">
+          <PrimaryCta href={REPO_URL} external>
             View on GitHub
-          </SecondaryCta>
+          </PrimaryCta>
         </div>
       </div>
     </section>
@@ -29,12 +31,12 @@ export function SiteFooter() {
     <footer className="mx-auto flex max-w-7xl flex-col gap-4 px-4 pb-10 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
       <Wordmark />
       <nav aria-label="Footer" className="flex gap-6">
-        <a href="#how" className="rounded-sm transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+        <Link href="/#how" className="rounded-sm transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
           How It Works
-        </a>
-        <a href="#friends" className="rounded-sm transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+        </Link>
+        <Link href="/#friends" className="rounded-sm transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
           With Friends
-        </a>
+        </Link>
       </nav>
     </footer>
   );
