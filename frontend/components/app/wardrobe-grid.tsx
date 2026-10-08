@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
 import { GarmentColors } from "@/components/app/garment-colors";
+import { EditGarment } from "@/components/app/edit-garment";
 import { RemoveGarment } from "@/components/app/remove-garment";
-import { RenameGarment } from "@/components/app/rename-garment";
 import { GarmentPrint } from "@/components/home/garment-print";
 import { kindOf, pieceName } from "@/lib/garment-kinds";
 import type { StoredGarment } from "@/lib/garments";
@@ -10,7 +10,7 @@ import type { StoredGarment } from "@/lib/garments";
 type WardrobeGridProps = {
   garments: StoredGarment[];
   empty: ReactNode;
-  /** Show rename, remove and colour controls on each piece (your own wardrobe only). */
+  /** Show edit, remove and colour controls on each piece (your own wardrobe only). */
   editable?: boolean;
 };
 
@@ -21,11 +21,14 @@ export function WardrobeGrid({ garments, empty, editable = false }: WardrobeGrid
     <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 2xl:grid-cols-4">
       {garments.map((garment) => {
         const name = pieceName(garment);
+        const kind = kindOf(garment);
         return (
           <li key={garment.id} className="group min-w-0">
             <div className="relative">
-              <GarmentPrint garment={{ name, kind: kindOf(garment.label) }} src={`/api/garments/${garment.id}/image`} />
-              {editable && <RenameGarment id={garment.id} name={name} customName={garment.name} />}
+              <GarmentPrint garment={{ name, kind }} src={`/api/garments/${garment.id}/image`} />
+              {editable && (
+                <EditGarment id={garment.id} label={garment.label} name={name} customName={garment.name} kind={kind} />
+              )}
               {editable && <RemoveGarment id={garment.id} name={name} />}
             </div>
             <GarmentColors garmentId={garment.id} colors={garment.colors} editable={editable} />

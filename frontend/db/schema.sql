@@ -29,6 +29,10 @@ create table if not exists garments (
 -- The owner's own name for a piece, e.g. "Blue oxford". Null shows the label instead.
 alter table garments add column if not exists name text;
 
+-- How the owner wears a piece when the model's label is wrong (e.g. a sweater detected as trousers).
+-- Null uses the kind implied by the label.
+alter table garments add column if not exists kind text check (kind in ('top', 'bottom', 'outerwear', 'dress'));
+
 create index if not exists garments_user_created_idx on garments (user_id, created_at desc);
 
 create table if not exists friendships (

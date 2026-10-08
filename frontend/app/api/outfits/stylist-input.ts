@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import type { StylistItem, WeatherReport } from "@/lib/api";
+import { kindOf } from "@/lib/garment-kinds";
 import type { StoredGarment } from "@/lib/garments";
 import { summarizeWeather } from "@/lib/weather-summary";
 
@@ -28,12 +29,16 @@ export function weatherLine(raw: unknown) {
 
 /** What the stylist needs per garment: its id, label (with the owner's name for it) and colour names. */
 export function toStylistItems(garments: StoredGarment[]): StylistItem[] {
-  return garments.map((garment) => ({
-    id: garment.id,
-    // The backend caps labels at 60 characters; names are at most 40.
-    label: (garment.name ? `${garment.name} (${garment.label})` : garment.label).slice(0, 60),
-    colors: garment.colors.map((color) => color.name),
-  }));
+  return garments.map((garment) => {
+    // If the owner corrected the kind, the model's label is wrong, so describe it by the kind instead.
+    const what = garment.kind ? kindOf(garment) : garment.label;
+    return {
+      id: garment.id,
+      // The backend caps labels at 60 characters; names are at most 40.
+      label: (garment.name ? `${garment.name} (${what})` : what).slice(0, 60),
+      colors: garment.colors.map((color) => color.name),
+    };
+  });
 }
 
 /** The stylist's ids back to full garments, in its order, skipping anything unknown. */
@@ -41,6 +46,8 @@ export function pick(garments: StoredGarment[], ids: string[]) {
   const byId = new Map(garments.map((garment) => [garment.id, garment]));
   return ids.flatMap((id) => {
     const garment = byId.get(id);
-    return garment ? [{ id: garment.id, label: garment.label, name: garment.name, colors: garment.colors }] : [];
+    return garment
+      ? [{ id: garment.id, label: garment.label, name: garment.name, kind: garment.kind, colors: garment.colors }]
+      : [];
   });
 }

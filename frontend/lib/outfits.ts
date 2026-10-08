@@ -1,9 +1,10 @@
 import "server-only";
 
 import { sql } from "@/lib/db";
+import type { Kind } from "@/lib/garment-kinds";
 import type { GarmentColor } from "@/lib/garments";
 
-export type OutfitPiece = { id: string; label: string; name: string | null; colors: GarmentColor[] };
+export type OutfitPiece = { id: string; label: string; name: string | null; kind: Kind | null; colors: GarmentColor[] };
 
 export type SavedOutfit = {
   id: string;
@@ -25,7 +26,7 @@ export type SavedOutfit = {
 export async function piecesOwnedBy(ownerId: string, ids: string[]): Promise<OutfitPiece[]> {
   if (ids.length === 0) return [];
   const rows = (await sql()`
-    select id, label, name, colors from garments where user_id = ${ownerId} and id = any(${ids}::uuid[])
+    select id, label, name, kind, colors from garments where user_id = ${ownerId} and id = any(${ids}::uuid[])
   `) as OutfitPiece[];
   const byId = new Map(rows.map((row) => [row.id, row]));
   return ids.flatMap((id) => byId.get(id) ?? []);
@@ -100,7 +101,7 @@ export async function listOutfits(userId: string): Promise<SavedOutfit[]> {
       order by o.created_at desc
     `,
     db`
-      select i.outfit_id, i.side, g.id, g.label, g.name, g.colors
+      select i.outfit_id, i.side, g.id, g.label, g.name, g.kind, g.colors
       from outfit_items i
       join outfits o on o.id = i.outfit_id
       join garments g on g.id = i.garment_id
@@ -111,7 +112,7 @@ export async function listOutfits(userId: string): Promise<SavedOutfit[]> {
 
   return outfits.map((row) => {
     const pieces = items.filter((item) => item.outfit_id === row.id);
-    const strip = ({ id, label, name, colors }: ItemRow): OutfitPiece => ({ id, label, name, colors });
+    const strip = ({ id, label, name, kind, colors }: ItemRow): OutfitPiece => ({ id, label, name, kind, colors });
     return {
       id: row.id,
       title: row.title,

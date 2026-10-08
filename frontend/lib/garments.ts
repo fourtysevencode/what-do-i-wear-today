@@ -1,6 +1,7 @@
 import "server-only";
 
 import { sql } from "@/lib/db";
+import type { Kind } from "@/lib/garment-kinds";
 import { deleteObject, putPng } from "@/lib/storage";
 
 export type GarmentColor = { name: string; hex: string; percentage: number };
@@ -10,6 +11,8 @@ export type StoredGarment = {
   label: string;
   /** The owner's own name for it, or null to show the label. */
   name: string | null;
+  /** How the owner wears it, if they corrected the model. Null uses the label's kind. */
+  kind: Kind | null;
   confidence: number | null;
   colors: GarmentColor[];
   createdAt: string;
@@ -19,6 +22,7 @@ type GarmentRow = {
   id: string;
   label: string;
   name: string | null;
+  kind: Kind | null;
   confidence: number | null;
   colors: GarmentColor[];
   created_at: string;
@@ -28,6 +32,7 @@ const toGarment = (row: GarmentRow): StoredGarment => ({
   id: row.id,
   label: row.label,
   name: row.name,
+  kind: row.kind,
   confidence: row.confidence,
   colors: row.colors,
   createdAt: row.created_at,
@@ -35,7 +40,7 @@ const toGarment = (row: GarmentRow): StoredGarment => ({
 
 export async function listGarments(userId: string) {
   const rows = (await sql()`
-    select id, label, name, confidence, colors, created_at
+    select id, label, name, kind, confidence, colors, created_at
     from garments where user_id = ${userId}
     order by created_at desc
   `) as GarmentRow[];
@@ -55,7 +60,7 @@ export async function createGarments(
     const rows = (await sql()`
       insert into garments (id, user_id, storage_key, label, confidence, colors)
       values (${id}, ${userId}, ${key}, ${item.label}, ${item.confidence}, ${JSON.stringify(item.colors)}::jsonb)
-      returning id, label, name, confidence, colors, created_at
+      returning id, label, name, kind, confidence, colors, created_at
     `) as GarmentRow[];
     created.push(toGarment(rows[0]));
   }
@@ -81,10 +86,19 @@ export async function storageKeyForViewer(garmentId: string, viewerId: string) {
   return rows[0]?.storage_key ?? null;
 }
 
-/** Sets the user's own name for a garment (null goes back to the label). False if it isn't theirs. */
-export async function renameGarment(userId: string, garmentId: string, name: string | null) {
+/**
+ * Sets the user's own name and kind for a garment (null goes back to the label for either).
+ * False if it isn't theirs.
+ */
+export async function updateGarment(
+  userId: string,
+  garmentId: string,
+  changes: { name: string | null; kind: Kind | null },
+) {
   const rows = await sql()`
-    update garments set name = ${name} where id = ${garmentId} and user_id = ${userId} returning id
+    update garments set name = ${changes.name}, kind = ${changes.kind}
+    where id = ${garmentId} and user_id = ${userId}
+    returning id
   `;
   return rows.length > 0;
 }
