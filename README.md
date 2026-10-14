@@ -2,7 +2,7 @@
 > Ever spent way too long deciding what to wear? Same.
 What Do I Wear Today? turns your wardrobe into a digital one and uses AI to help you build outfits based on your clothes, the weather, and what you're doing. [Try it out here!](https://wardrobe.ronakbuilds.tech/)
 
-<img src="docs/preview.gif" alt="Demo GIF" width="600">
+<img src="docs/demo.gif" alt="Demo GIF" width="600">
 
 
 ---
