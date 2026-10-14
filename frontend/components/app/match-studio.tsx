@@ -3,9 +3,10 @@
 import { ArrowsClockwiseIcon, SparkleIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 
 import { saveMatchedOutfit } from "@/app/(app)/outfits/actions";
+import { Monogram } from "@/components/app/monogram";
 import { OutfitPieces, type Piece } from "@/components/app/outfit-pieces";
 import { OutfitViewArea, OutfitViewToggle } from "@/components/app/outfit-view-mode";
 import {
@@ -15,9 +16,11 @@ import {
   StylingStatus,
   type SaveState,
 } from "@/components/app/studio-parts";
+import { revealResult } from "@/components/app/studio-result";
 import { Spinner } from "@/components/app/spinner";
-import { buttonPrimary, label, surface, textarea } from "@/components/app/styles";
+import { inlineLink, label, surface, textarea } from "@/components/app/styles";
 import { WeatherPicker, type WeatherChoice } from "@/components/app/weather-picker";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type Side = { reasoning: string; items: Piece[] };
@@ -35,14 +38,14 @@ type Status =
   | { kind: "ready"; result: Matched; notes: string }
   | { kind: "error"; message: string };
 
-function OutfitColumn({ heading, side }: { heading: string; side: Side }) {
+function OutfitColumn({ heading, side, scope }: { heading: string; side: Side; scope: string }) {
   return (
-    <section aria-label={heading} className="min-w-0 rounded-(--radius-surface) bg-secondary/60 p-4 md:p-5">
-      <h3 className="font-heading text-lg font-semibold tracking-tight" translate="no">
+    <section aria-label={heading} className="min-w-0 rounded-(--radius-surface) bg-secondary p-4 md:p-5">
+      <h3 className="type-heading" translate="no">
         {heading}
       </h3>
       <p className="mt-1 mb-5 text-sm text-pretty text-muted-foreground">{side.reasoning}</p>
-      <OutfitPieces pieces={side.items} compact />
+      <OutfitPieces pieces={side.items} scope={scope} compact />
     </section>
   );
 }
@@ -57,13 +60,14 @@ export function MatchStudio({ friends }: { friends: string[] }) {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [save, setSave] = useState<SaveState>({ kind: "idle" });
   const [slow, setSlow] = useState(false);
+  const resultRef = useRef<HTMLElement>(null);
   const loading = status.kind === "loading";
 
   if (friends.length === 0) {
     return (
       <EmptyResult>
         Matching needs a friend. Add one on the{" "}
-        <Link href="/friends" className="font-medium text-foreground underline decoration-foreground/25 underline-offset-4">
+        <Link href="/friends" className={inlineLink}>
           Friends page
         </Link>
         , and once they accept you can plan outfits together.
@@ -75,6 +79,7 @@ export function MatchStudio({ friends }: { friends: string[] }) {
     setStatus({ kind: "loading" });
     setSave({ kind: "idle" });
     setSlow(false);
+    requestAnimationFrame(() => revealResult(resultRef.current));
     const slowTimer = setTimeout(() => setSlow(true), 8000);
     try {
       const res = await fetch("/api/outfits/match", {
@@ -95,8 +100,8 @@ export function MatchStudio({ friends }: { friends: string[] }) {
     }
   }
 
-  async function saveOutfits() {
-    if (status.kind !== "ready") return;
+  async function saveOutfits(): Promise<SaveState> {
+    if (status.kind !== "ready") return save;
     setSave({ kind: "saving" });
     const { result } = status;
     const saved = await saveMatchedOutfit({
@@ -110,7 +115,9 @@ export function MatchStudio({ friends }: { friends: string[] }) {
       friendIds: result.friend.items.map((item) => item.id),
       friendNote: result.friend.reasoning,
     });
-    setSave(saved.ok ? { kind: "saved" } : { kind: "error", message: saved.message ?? "Couldn't save them." });
+    const next: SaveState = saved.ok ? { kind: "saved" } : { kind: "error", message: saved.message ?? "Couldn't save them." };
+    setSave(next);
+    return next;
   }
 
   return (
@@ -121,9 +128,9 @@ export function MatchStudio({ friends }: { friends: string[] }) {
           event.preventDefault();
           void build();
         }}
-        className={`${surface} flex flex-col gap-6 self-start xl:sticky xl:top-10`}
+        className={`${surface} flex flex-col gap-6 self-start xl:sticky xl:top-12`}
       >
-        <h2 id={`${id}-form`} className="font-heading text-xl font-semibold tracking-tight">
+        <h2 id={`${id}-form`} className="type-heading">
           Who&apos;s coming?
         </h2>
 
@@ -134,8 +141,9 @@ export function MatchStudio({ friends }: { friends: string[] }) {
               <label
                 key={username}
                 className={cn(
-                  "flex cursor-pointer items-center rounded-full border border-border px-4 py-2 text-sm font-medium transition-colors hover:border-foreground/30",
-                  "has-checked:border-primary has-checked:bg-primary has-checked:text-primary-foreground",
+                  "flex h-11 cursor-pointer items-center gap-2 rounded-full bg-card pr-4 pl-1.5 text-sm font-medium ring-1 ring-border ring-inset select-none",
+                  "transition-[background-color,color,scale] duration-150 hover:bg-secondary active:scale-[0.97]",
+                  "has-checked:bg-primary has-checked:text-primary-foreground has-checked:ring-transparent",
                   "has-focus-visible:ring-2 has-focus-visible:ring-ring has-focus-visible:ring-offset-2 has-focus-visible:ring-offset-background",
                 )}
               >
@@ -147,6 +155,7 @@ export function MatchStudio({ friends }: { friends: string[] }) {
                   onChange={() => setFriend(username)}
                   className="sr-only"
                 />
+                <Monogram username={username} size="sm" />
                 <span translate="no">@{username}</span>
               </label>
             ))}
@@ -163,29 +172,24 @@ export function MatchStudio({ friends }: { friends: string[] }) {
             maxLength={500}
             value={notes}
             onChange={(event) => setNotes(event.target.value)}
-            placeholder="e.g. Beach day, a friend's birthday dinner…"
+            placeholder="Beach day, a friend's birthday dinner…"
             className={textarea}
           />
         </div>
         <WeatherPicker onChange={setWeather} />
-        <button
-          type="submit"
-          disabled={loading || !friend}
-          aria-busy={loading || undefined}
-          className={`${buttonPrimary} h-12 w-full text-[15px]`}
-        >
+        <Button type="submit" size="lg" disabled={loading || !friend} aria-busy={loading || undefined} className="w-full">
           {loading ? (
             <Spinner />
           ) : status.kind === "ready" ? (
-            <ArrowsClockwiseIcon aria-hidden="true" className="size-4" />
+            <ArrowsClockwiseIcon aria-hidden="true" />
           ) : (
-            <SparkleIcon aria-hidden="true" className="size-4" weight="fill" />
+            <SparkleIcon aria-hidden="true" weight="fill" />
           )}
           {loading ? "Styling…" : status.kind === "ready" ? "Try Another" : "Build Matching Outfits"}
-        </button>
+        </Button>
       </form>
 
-      <section aria-label="Matching outfits" aria-busy={loading} className="min-w-0">
+      <section ref={resultRef} aria-label="Matching outfits" aria-busy={loading} className="min-w-0 scroll-mt-6">
         {status.kind === "idle" && (
           <EmptyResult>Pick a friend and describe the plan. You&apos;ll each get an outfit from your own clothes.</EmptyResult>
         )}
@@ -201,18 +205,19 @@ export function MatchStudio({ friends }: { friends: string[] }) {
           </EmptyResult>
         )}
         {status.kind === "ready" && (
-          <OutfitViewArea>
+          <OutfitViewArea className="enter-rise">
             <div className="flex flex-wrap items-start justify-between gap-4">
-              <div className="min-w-0 max-w-[60ch]">
-                <h2 className="type-display text-3xl md:text-4xl">{status.result.title}</h2>
+              <div className="max-w-[60ch] min-w-0">
+                <p className="type-eyebrow text-thread-text">A matching pair</p>
+                <h2 className="type-title mt-2">{status.result.title}</h2>
                 <p className="mt-3 leading-relaxed text-pretty text-muted-foreground">{status.result.theme}</p>
               </div>
               <OutfitViewToggle />
             </div>
             {/* You on the left, your friend on the right. */}
             <div className="mt-8 grid gap-4 md:grid-cols-2">
-              <OutfitColumn heading="You" side={status.result.you} />
-              <OutfitColumn heading={`@${status.result.friend.username}`} side={status.result.friend} />
+              <OutfitColumn heading="You" side={status.result.you} scope="you" />
+              <OutfitColumn heading={`@${status.result.friend.username}`} side={status.result.friend} scope="friend" />
             </div>
             <div className="mt-8 border-t border-border pt-6">
               <SaveButton state={save} onSave={saveOutfits} />

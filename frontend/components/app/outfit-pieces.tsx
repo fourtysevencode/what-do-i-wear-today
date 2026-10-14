@@ -9,15 +9,25 @@ export type Piece = { id: string; label: string; name: string | null; kind: stri
 
 type OutfitPiecesProps = {
   pieces: Piece[];
+  /** Unique on the page (an outfit id, "studio", "you"…), so each piece's morph name is too. */
+  scope: string;
   /** Smaller prints, for side-by-side matching outfits and saved lists. */
   compact?: boolean;
 };
 
 /**
+ * The same piece in both layouts carries the same view-transition name, so switching
+ * Grid ↔ Stacked moves each piece from one spot to the other (the hidden layout is
+ * display: none and doesn't take part).
+ */
+const morph = (scope: string, id: string) =>
+  ({ viewTransitionName: `piece-${scope}-${id}`.replace(/[^a-zA-Z0-9-]/g, ""), viewTransitionClass: "morph" }) as CSSProperties;
+
+/**
  * One outfit in both layouts: a grid, and stacked top-to-toe as it'd be worn.
  * The nearest <OutfitViewArea> decides which one shows.
  */
-export function OutfitPieces({ pieces, compact = false }: OutfitPiecesProps) {
+export function OutfitPieces({ pieces, scope, compact = false }: OutfitPiecesProps) {
   if (pieces.length === 0) {
     return <p className="text-sm text-muted-foreground">These pieces are no longer in the wardrobe.</p>;
   }
@@ -33,32 +43,21 @@ export function OutfitPieces({ pieces, compact = false }: OutfitPiecesProps) {
         )}
       >
         {pieces.map((piece) => (
-          <li key={piece.id} className="min-w-0">
-            <GarmentPrint
-              garment={{ name: pieceName(piece), kind: kindOf(piece) }}
-              src={`/api/garments/${piece.id}/image`}
-            />
-            {piece.colors.length > 0 && (
-              <p className="mt-2 truncate px-1 text-xs text-muted-foreground">
-                {piece.colors.map((color) => color.name).join(", ")}
-              </p>
-            )}
+          <li key={piece.id} className="min-w-0" style={morph(scope, piece.id)}>
+            <GarmentPrint garment={{ name: pieceName(piece), kind: kindOf(piece) }} src={`/api/garments/${piece.id}/image`} />
           </li>
         ))}
       </ul>
 
       {/* Top to toe in a single column, the order it's worn; pieces never overlap. */}
-      <ol aria-label="Outfit, as worn" className="hidden flex-col items-center gap-5 pb-2 group-data-[view=stacked]/view:flex">
+      <ol aria-label="Outfit, as worn" className="hidden flex-col items-center gap-4 pb-2 group-data-[view=stacked]/view:flex">
         {worn.map((piece, i) => (
           <li
             key={piece.id}
-            className={cn("rotate-(--tilt)", compact ? "w-[min(12rem,78%)]" : "w-[min(15rem,70%)]")}
-            style={{ "--tilt": i % 2 ? "1deg" : "-1deg" } as CSSProperties}
+            className={cn(compact ? "w-[min(12rem,78%)]" : "w-[min(15rem,70%)]")}
+            style={{ ...morph(scope, piece.id), rotate: i % 2 ? "1deg" : "-1deg" }}
           >
-            <GarmentPrint
-              garment={{ name: pieceName(piece), kind: kindOf(piece) }}
-              src={`/api/garments/${piece.id}/image`}
-            />
+            <GarmentPrint garment={{ name: pieceName(piece), kind: kindOf(piece) }} src={`/api/garments/${piece.id}/image`} />
           </li>
         ))}
       </ol>

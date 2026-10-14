@@ -4,7 +4,8 @@ import { useActionState } from "react";
 
 import { changeUsername } from "@/app/(app)/account/actions";
 import { Spinner } from "@/components/app/spinner";
-import { buttonPrimary, input, label } from "@/components/app/styles";
+import { input, label } from "@/components/app/styles";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export function UsernameForm({ current }: { current: string }) {
@@ -17,10 +18,7 @@ export function UsernameForm({ current }: { current: string }) {
       </label>
       <div className="flex max-w-md flex-col gap-2 sm:flex-row">
         <div className="relative min-w-0 flex-1">
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-muted-foreground"
-          >
+          <span aria-hidden="true" className="pointer-events-none absolute top-1/2 left-5 -translate-y-1/2 text-muted-foreground">
             @
           </span>
           <input
@@ -32,19 +30,20 @@ export function UsernameForm({ current }: { current: string }) {
             maxLength={24}
             autoComplete="username"
             autoCapitalize="none"
+            autoCorrect="off"
             spellCheck={false}
             // Keep what was typed after a failed attempt; otherwise show the saved name.
             defaultValue={state?.username ?? current}
             key={state?.ok ? state.username : current}
             aria-invalid={state && !state.ok ? true : undefined}
             aria-describedby="username-help"
-            className={cn(input, "pl-8")}
+            className={cn(input, "pl-9")}
           />
         </div>
-        <button type="submit" disabled={pending} aria-busy={pending || undefined} className={buttonPrimary}>
+        <Button type="submit" size="lg" disabled={pending} aria-busy={pending || undefined}>
           {pending && <Spinner />}
-          {pending ? "Saving…" : "Save Username"}
-        </button>
+          {pending ? "Saving…" : "Save"}
+        </Button>
       </div>
       <p
         id="username-help"
@@ -52,7 +51,7 @@ export function UsernameForm({ current }: { current: string }) {
         className={cn("text-sm text-pretty", state && !state.ok ? "text-destructive" : "text-muted-foreground")}
       >
         {state?.message ??
-          "3 to 24 characters: lowercase letters, numbers, dots, dashes or underscores. Friends use it to find you."}
+          "3 to 24 characters: lowercase letters, numbers, dots, dashes or underscores."}
       </p>
     </form>
   );

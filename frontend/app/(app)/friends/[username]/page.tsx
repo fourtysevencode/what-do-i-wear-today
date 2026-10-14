@@ -1,11 +1,14 @@
-import { ArrowLeftIcon, SparkleIcon } from "@phosphor-icons/react/dist/ssr";
+import { SparkleIcon } from "@phosphor-icons/react/dist/ssr";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-import { buttonPrimary } from "@/components/app/styles";
+import { BackLink } from "@/components/app/back-link";
+import { Monogram } from "@/components/app/monogram";
+import { DirectionalPage } from "@/components/app/page-transition";
 import { WardrobeGrid, WardrobeGridSkeleton } from "@/components/app/wardrobe-grid";
+import { buttonVariants } from "@/components/ui/button";
 import { requireUser } from "@/lib/dal";
 import { findFriend } from "@/lib/friends";
 import { listGarments } from "@/lib/garments";
@@ -22,51 +25,62 @@ async function FriendWardrobe({ params }: { params: PageProps<"/friends/[usernam
   const garments = await listGarments(friend.id);
   return (
     <>
-      <h1 className="type-display text-4xl md:text-5xl">
-        <span translate="no">@{friend.username}</span>&apos;s wardrobe
-      </h1>
-      <div className="mt-2 mb-8 flex flex-wrap items-center justify-between gap-4">
-        <p className="text-muted-foreground">
-          {garments.length} {garments.length === 1 ? "piece" : "pieces"}
-        </p>
-        <Link href={`/outfits/match?friend=${encodeURIComponent(friend.username)}`} className={buttonPrimary}>
-          <SparkleIcon aria-hidden="true" className="size-4" weight="fill" />
-          Build Matching Outfits
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-4">
+          <Monogram username={friend.username} size="lg" />
+          <div className="min-w-0">
+            <h1 className="type-title truncate">
+              <span translate="no">@{friend.username}</span>
+            </h1>
+            <p className="mt-0.5 text-muted-foreground">
+              {garments.length} {garments.length === 1 ? "piece" : "pieces"}
+            </p>
+          </div>
+        </div>
+        <Link
+          href={`/outfits/match?friend=${encodeURIComponent(friend.username)}`}
+          transitionTypes={["nav-forward"]}
+          className={buttonVariants()}
+        >
+          <SparkleIcon aria-hidden="true" weight="fill" />
+          Match Outfits
         </Link>
       </div>
-      <WardrobeGrid
-        garments={garments}
-        empty={
-          <p className="rounded-(--radius-surface) border border-dashed border-foreground/15 px-6 py-16 text-center text-muted-foreground">
-            <span translate="no">@{friend.username}</span> hasn&apos;t added any clothes yet.
-          </p>
-        }
-      />
+      <div className="mt-8">
+        <WardrobeGrid
+          garments={garments}
+          empty={
+            <p className="rounded-(--radius-surface) border border-dashed border-foreground/15 px-6 py-16 text-center text-muted-foreground">
+              <span translate="no">@{friend.username}</span> hasn&apos;t added any clothes yet.
+            </p>
+          }
+        />
+      </div>
     </>
   );
 }
 
 export default function FriendWardrobePage({ params }: PageProps<"/friends/[username]">) {
   return (
-    <div>
-      <Link
-        href="/friends"
-        className="mb-6 inline-flex items-center gap-1.5 rounded-full text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-      >
-        <ArrowLeftIcon aria-hidden="true" className="size-4" />
-        Friends
-      </Link>
-      <Suspense
-        fallback={
-          <>
-            <div className="h-12 w-72 max-w-full animate-pulse rounded-full bg-muted motion-reduce:animate-none" />
-            <div className="mt-3 mb-8 h-5 w-20 animate-pulse rounded-full bg-muted motion-reduce:animate-none" />
-            <WardrobeGridSkeleton />
-          </>
-        }
-      >
-        <FriendWardrobe params={params} />
-      </Suspense>
-    </div>
+    <DirectionalPage>
+      <div>
+        <BackLink href="/friends">Friends</BackLink>
+        <Suspense
+          fallback={
+            <>
+              <div className="flex items-center gap-4">
+                <div className="size-16 animate-pulse rounded-full bg-muted motion-reduce:animate-none" />
+                <div className="h-10 w-56 max-w-full animate-pulse rounded-full bg-muted motion-reduce:animate-none" />
+              </div>
+              <div className="mt-8">
+                <WardrobeGridSkeleton />
+              </div>
+            </>
+          }
+        >
+          <FriendWardrobe params={params} />
+        </Suspense>
+      </div>
+    </DirectionalPage>
   );
 }

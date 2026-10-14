@@ -2,23 +2,25 @@
 
 import {
   ArrowCounterClockwiseIcon,
-  CameraIcon,
   CameraRotateIcon,
   CheckIcon,
+  ImagesIcon,
   TimerIcon,
-  XIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { buttonPrimary, buttonSecondary } from "@/components/app/styles";
+import { Button } from "@/components/ui/button";
+import { Sheet } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
 type Facing = "environment" | "user";
 
 type CameraCaptureProps = {
   open: boolean;
-  onClose: () => void;
+  onOpenChange: (open: boolean) => void;
   onCapture: (photo: Blob) => void;
+  /** Leave the camera for the photo library. */
+  onPickPhoto: () => void;
 };
 
 const TIMER_SECONDS = 3;
@@ -31,10 +33,16 @@ function cameraError(error: unknown) {
   return "Couldn't start the camera. Choose a photo instead.";
 }
 
-/** Full-screen camera: live preview, optional timer, then review before using the shot. */
-export function CameraCapture({ open, onClose, onCapture }: CameraCaptureProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+/** Buttons on the black camera surface. */
+const roundControl =
+  "flex size-12 items-center justify-center rounded-full bg-white/12 text-white transition-[background-color,scale,opacity] duration-150 hover:bg-white/20 active:scale-[0.92] disabled:opacity-35 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none";
+
+/**
+ * The camera as a full-height sheet: live preview, optional timer, then review before
+ * using the shot. Swipe down (or Escape) to put it away; the stream stops with it.
+ */
+export function CameraCapture({ open, onOpenChange, onCapture, onPickPhoto }: CameraCaptureProps) {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const [facing, setFacing] = useState<Facing>("environment");
   const [error, setError] = useState<string | null>(null);
@@ -43,6 +51,7 @@ export function CameraCapture({ open, onClose, onCapture }: CameraCaptureProps) 
   const [timerOn, setTimerOn] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [canSwitch, setCanSwitch] = useState(false);
+  const [flash, setFlash] = useState(0);
 
   const stopStream = useCallback(() => {
     streamRef.current?.getTracks().forEach((track) => track.stop());
@@ -50,13 +59,15 @@ export function CameraCapture({ open, onClose, onCapture }: CameraCaptureProps) 
     setReady(false);
   }, []);
 
-  // Open/close the native dialog (focus trap + Escape come with it).
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    if (open && !dialog.open) dialog.showModal();
-    if (!open && dialog.open) dialog.close();
-  }, [open]);
+  // The sheet mounts its content a beat after opening, so attach the stream whenever the
+  // <video> appears, as well as when the stream arrives.
+  const attachVideo = useCallback((video: HTMLVideoElement | null) => {
+    videoRef.current = video;
+    if (video && streamRef.current && video.srcObject !== streamRef.current) {
+      video.srcObject = streamRef.current;
+      void video.play().catch(() => {});
+    }
+  }, []);
 
   // Start the camera while open and not reviewing a shot; always release it afterwards.
   useEffect(() => {
@@ -79,10 +90,7 @@ export function CameraCapture({ open, onClose, onCapture }: CameraCaptureProps) 
           return;
         }
         streamRef.current = stream;
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          await videoRef.current.play().catch(() => {});
-        }
+        attachVideo(videoRef.current);
         setReady(true);
         const devices = await navigator.mediaDevices.enumerateDevices();
         if (!cancelled) setCanSwitch(devices.filter((d) => d.kind === "videoinput").length > 1);
@@ -96,7 +104,7 @@ export function CameraCapture({ open, onClose, onCapture }: CameraCaptureProps) 
       cancelled = true;
       stopStream();
     };
-  }, [open, shot, facing, stopStream]);
+  }, [open, shot, facing, stopStream, attachVideo]);
 
   // Free the preview image when it's replaced or the camera closes.
   useEffect(() => {
@@ -124,6 +132,9 @@ export function CameraCapture({ open, onClose, onCapture }: CameraCaptureProps) 
   function takePicture() {
     const video = videoRef.current;
     if (!video || !video.videoWidth) return;
+    // Feedback on the frame the shot is taken: a flash and, where supported, a tap.
+    setFlash((n) => n + 1);
+    navigator.vibrate?.(10);
     const canvas = document.createElement("canvas");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -140,122 +151,137 @@ export function CameraCapture({ open, onClose, onCapture }: CameraCaptureProps) 
     );
   }
 
-  function close() {
+  function reset() {
     setCountdown(null);
     setShot(null);
     stopStream();
-    onClose();
   }
 
   return (
-    <dialog
-      ref={dialogRef}
-      aria-label="Take a photo"
-      onCancel={(event) => {
-        event.preventDefault();
-        close();
+    <Sheet
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) reset();
+        onOpenChange(next);
       }}
-      className="m-auto h-dvh max-h-none w-full max-w-none bg-transparent p-0 backdrop:bg-black/80 sm:h-auto sm:max-h-[92dvh] sm:max-w-xl"
+      title={shot ? "Use this photo?" : "Take a photo"}
+      size="full"
+      tone="dark"
     >
-      <div className="flex h-full flex-col overflow-hidden bg-card text-card-foreground sm:rounded-(--radius-surface) sm:ring-1 sm:ring-border">
-        <div className="flex items-center justify-between gap-3 px-4 py-3">
-          <h2 className="font-heading text-lg font-semibold tracking-tight">
-            {shot ? "Use this photo?" : "Take a photo"}
-          </h2>
-          <button
-            type="button"
-            onClick={close}
-            aria-label="Close camera"
-            className="flex size-9 items-center justify-center rounded-full hover:bg-foreground/5 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-          >
-            <XIcon aria-hidden="true" className="size-5" />
-          </button>
-        </div>
-
-        <div className="relative flex min-h-0 flex-1 items-center justify-center bg-black sm:aspect-3/4 sm:flex-none">
+      <div className="flex min-h-0 flex-1 flex-col gap-4 px-3 sm:px-5">
+        <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-[1.25rem] bg-black sm:aspect-3/4 sm:flex-none">
           {shot ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={shot.url} alt="The photo you just took" className="size-full object-contain" />
           ) : (
             <video
-              ref={videoRef}
+              ref={attachVideo}
               playsInline
               muted
               aria-label="Camera preview"
-              className={cn("size-full object-contain", facing === "user" && "-scale-x-100")}
+              className={cn("size-full object-cover", facing === "user" && "-scale-x-100")}
             />
           )}
 
-          {!shot && !ready && !error && (
-            <p className="absolute text-sm text-white/80">Starting camera…</p>
-          )}
+          {!shot && !ready && !error && <p className="absolute text-sm text-white/70">Starting camera…</p>}
+
           {error && (
-            <p role="alert" className="absolute mx-6 rounded-(--radius-print) bg-card px-4 py-3 text-center text-sm text-pretty">
-              {error}
-            </p>
+            <div role="alert" className="absolute inset-x-6 flex flex-col items-center gap-4 text-center">
+              <p className="text-sm text-pretty text-white/85">{error}</p>
+              <button
+                type="button"
+                onClick={onPickPhoto}
+                className="inline-flex h-11 items-center gap-2 rounded-full bg-white px-5 text-[0.9375rem] font-medium text-black transition-[scale] duration-150 active:scale-[0.97]"
+              >
+                <ImagesIcon aria-hidden="true" className="size-4" />
+                Choose a Photo
+              </button>
+            </div>
           )}
+
           {countdown !== null && countdown > 0 && (
             <span
+              key={countdown}
               aria-live="assertive"
-              className="absolute font-heading text-8xl font-bold text-white tabular-nums drop-shadow-lg"
+              className="absolute font-display text-9xl font-medium text-white tabular-nums drop-shadow-lg motion-safe:animate-[countdown-tick_1s_var(--ease-out)_both]"
             >
               {countdown}
             </span>
           )}
-          {!shot && ready && (
-            <p className="absolute bottom-3 rounded-full bg-black/55 px-3 py-1 text-xs text-white">
+
+          {!shot && ready && countdown === null && (
+            <p className="absolute bottom-4 rounded-full bg-black/55 px-3 py-1.5 text-xs text-white backdrop-blur-sm">
               Stand back so your whole outfit is in frame
             </p>
           )}
+
+          {/* The shutter flash: plays once per shot. */}
+          {flash > 0 && (
+            <span
+              key={flash}
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-white opacity-0 motion-safe:animate-[shutter-flash_180ms_var(--ease-out)]"
+            />
+          )}
         </div>
 
-        <div className="flex items-center justify-center gap-3 px-4 py-4">
+        <div className="flex items-center justify-between gap-3 px-3 pb-1">
           {shot ? (
             <>
-              <button type="button" onClick={() => setShot(null)} className={buttonSecondary}>
+              <button type="button" onClick={() => setShot(null)} className={cn(roundControl, "w-auto gap-2 px-5 text-[0.9375rem] font-medium")}>
                 <ArrowCounterClockwiseIcon aria-hidden="true" className="size-4" />
                 Retake
               </button>
-              <button
-                type="button"
+              <Button
+                size="lg"
                 onClick={() => {
                   onCapture(shot.blob);
-                  close();
+                  onOpenChange(false);
+                  reset();
                 }}
-                className={buttonPrimary}
+                className="bg-white text-black shadow-none hover:bg-white/90"
               >
-                <CheckIcon aria-hidden="true" className="size-4" weight="bold" />
+                <CheckIcon aria-hidden="true" weight="bold" />
                 Use Photo
-              </button>
+              </Button>
             </>
           ) : (
             <>
-              <button
-                type="button"
-                onClick={() => setTimerOn((on) => !on)}
-                aria-pressed={timerOn}
-                aria-label={`${TIMER_SECONDS}-second timer`}
-                title={`${TIMER_SECONDS}-second timer`}
-                className="flex size-11 items-center justify-center gap-0.5 rounded-full text-sm font-medium text-muted-foreground transition-colors hover:bg-foreground/5 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none aria-pressed:bg-secondary aria-pressed:text-foreground"
-              >
-                <TimerIcon aria-hidden="true" className="size-5" />
+              <button type="button" onClick={onPickPhoto} aria-label="Choose from photos" title="Choose from photos" className={roundControl}>
+                <ImagesIcon aria-hidden="true" className="size-5" />
               </button>
-              <button
-                type="button"
-                onClick={() => (timerOn ? setCountdown(TIMER_SECONDS) : takePicture())}
-                disabled={!ready || countdown !== null}
-                aria-label="Take photo"
-                className="flex size-16 items-center justify-center rounded-full bg-primary text-primary-foreground ring-4 ring-primary/25 transition-[scale,opacity] duration-200 active:scale-95 disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none"
-              >
-                <CameraIcon aria-hidden="true" className="size-7" weight="fill" />
-              </button>
+
+              <div className="flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => setTimerOn((on) => !on)}
+                  aria-pressed={timerOn}
+                  aria-label={`${TIMER_SECONDS}-second timer`}
+                  title={`${TIMER_SECONDS}-second timer`}
+                  className={cn(roundControl, "size-10 aria-pressed:bg-white aria-pressed:text-black")}
+                >
+                  <TimerIcon aria-hidden="true" className="size-5" />
+                </button>
+                {/* The shutter: a white disc inside a ring, like the iOS camera. */}
+                <button
+                  type="button"
+                  onClick={() => (timerOn ? setCountdown(TIMER_SECONDS) : takePicture())}
+                  disabled={!ready || countdown !== null}
+                  aria-label="Take photo"
+                  className="group flex size-[4.5rem] items-center justify-center rounded-full ring-4 ring-white/90 ring-inset transition-opacity duration-150 disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                >
+                  <span className="size-[3.5rem] rounded-full bg-white transition-[scale] duration-150 ease-out group-active:scale-[0.86]" />
+                </button>
+                <span aria-hidden="true" className="size-10" />
+              </div>
+
               <button
                 type="button"
                 onClick={() => setFacing((f) => (f === "environment" ? "user" : "environment"))}
                 disabled={!canSwitch || countdown !== null}
                 aria-label="Switch camera"
                 title="Switch camera"
-                className="flex size-11 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground disabled:invisible focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                className={cn(roundControl, "disabled:invisible")}
               >
                 <CameraRotateIcon aria-hidden="true" className="size-5" />
               </button>
@@ -263,6 +289,6 @@ export function CameraCapture({ open, onClose, onCapture }: CameraCaptureProps) 
           )}
         </div>
       </div>
-    </dialog>
+    </Sheet>
   );
 }

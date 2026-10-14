@@ -5,12 +5,10 @@ import { useActionState } from "react";
 
 import type { AuthState } from "@/app/(auth)/actions";
 import { Spinner } from "@/components/app/spinner";
-import { buttonPrimary, fieldError, input, label } from "@/components/app/styles";
+import { fieldError, inlineLink, input, label } from "@/components/app/styles";
 import { Turnstile } from "@/components/app/turnstile";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
-const inlineLink =
-  "rounded-sm font-medium text-foreground underline decoration-foreground/25 underline-offset-4 hover:decoration-pop focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none";
 
 type AuthFormProps = {
   mode: "login" | "signup";
@@ -38,7 +36,7 @@ export function AuthForm({ mode, action }: AuthFormProps) {
         <div className="relative">
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-muted-foreground"
+            className="pointer-events-none absolute top-1/2 left-5 -translate-y-1/2 text-muted-foreground"
           >
             @
           </span>
@@ -48,13 +46,14 @@ export function AuthForm({ mode, action }: AuthFormProps) {
             type="text"
             autoComplete="username"
             autoCapitalize="none"
+            autoCorrect="off"
             spellCheck={false}
             required
             maxLength={24}
             defaultValue={state?.username}
             aria-invalid={usernameError ? true : undefined}
             aria-describedby={usernameError ? "username-error" : mode === "signup" ? "username-help" : undefined}
-            className={cn(input, "pl-8")}
+            className={cn(input, "pl-9")}
           />
         </div>
         {usernameError ? (
@@ -133,27 +132,19 @@ export function AuthForm({ mode, action }: AuthFormProps) {
       {mode === "signup" && <Turnstile resetKey={state} />}
 
       {state?.error && (
-        <p role="alert" className="rounded-(--radius-print) bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <p role="alert" className="rounded-(--radius-card) bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {state.error}
         </p>
       )}
 
-      <button
-        type="submit"
-        disabled={pending}
-        aria-busy={pending || undefined}
-        className={`${buttonPrimary} mt-1 h-12 w-full text-[15px]`}
-      >
+      <Button type="submit" size="lg" disabled={pending} aria-busy={pending || undefined} className="mt-1 w-full">
         {pending && <Spinner />}
         {pending ? text.pending : text.submit}
-      </button>
+      </Button>
 
       <p className="text-center text-sm text-muted-foreground">
         {text.switchText}{" "}
-        <Link
-          href={text.switchHref}
-          className="rounded-sm font-medium text-foreground underline decoration-foreground/25 underline-offset-4 hover:decoration-pop focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-        >
+        <Link href={text.switchHref} className={inlineLink}>
           {text.switchLink}
         </Link>
       </p>

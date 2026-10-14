@@ -16,7 +16,7 @@ export default function TermsPage() {
         <p>
           These terms are the agreement between you and What do I wear today? (&quot;the app&quot;, &quot;we&quot;).
           By creating an account or using the app, you agree to them and to our{" "}
-          <Link href="/privacy" className="font-medium text-foreground underline decoration-foreground/25 underline-offset-4 hover:decoration-pop">
+          <Link href="/privacy" className="font-medium text-foreground underline decoration-foreground/25 underline-offset-4 hover:decoration-thread">
             Privacy Policy
           </Link>
           .

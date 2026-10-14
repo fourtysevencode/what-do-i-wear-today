@@ -1,20 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Outfit } from "next/font/google";
+import { Fraunces } from "next/font/google";
 import "./globals.css";
 
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
-});
+import { ThemeColorSync } from "@/components/theme-color-sync";
+import { Toaster } from "@/components/ui/toaster";
+import { THEME_COLOR } from "@/lib/theme-color";
 
-const geist = Geist({
-  variable: "--font-geist",
+// Display face only; UI text uses the platform's system font (see globals.css).
+// Variable, so optical size follows the text size and the SOFT axis rounds the serifs a touch.
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  axes: ["opsz", "SOFT"],
 });
 
 export const metadata: Metadata = {
@@ -26,9 +23,13 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   colorScheme: "light dark",
+  // Edge to edge under the notch and home indicator; chrome pads itself with env(safe-area-inset-*).
+  viewportFit: "cover",
+  // The software keyboard shrinks the layout on Android too, so bottom-pinned UI stays visible.
+  interactiveWidget: "resizes-content",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fff8fb" },
-    { media: "(prefers-color-scheme: dark)", color: "#140a16" },
+    { media: "(prefers-color-scheme: light)", color: THEME_COLOR.light },
+    { media: "(prefers-color-scheme: dark)", color: THEME_COLOR.dark },
   ],
 };
 
@@ -38,7 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       // Smooth scrolling is set in globals.css; this tells Next to pause it during route changes.
       data-scroll-behavior="smooth"
-      className={`${outfit.variable} ${geist.variable} ${geistMono.variable} antialiased`}
+      className={`${fraunces.variable} antialiased`}
       // The script below may add data-theme before React hydrates.
       suppressHydrationWarning
     >
@@ -51,7 +52,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           }}
         />
       </head>
-      <body className="min-h-dvh">{children}</body>
+      <body className="min-h-dvh">
+        <Toaster>{children}</Toaster>
+        <ThemeColorSync />
+      </body>
     </html>
   );
 }

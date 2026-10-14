@@ -2,7 +2,9 @@
 
 import { PersonSimpleIcon, SquaresFourIcon } from "@phosphor-icons/react/dist/ssr";
 import { useSyncExternalStore, type ReactNode } from "react";
+import { flushSync } from "react-dom";
 
+import { Segmented } from "@/components/ui/segmented";
 import { cn } from "@/lib/utils";
 
 type Mode = "grid" | "stacked";
@@ -18,13 +20,23 @@ function readMode(): Mode {
   }
 }
 
+/**
+ * Switching layouts morphs each piece from its grid cell to its place in the stack
+ * (pieces carry matching view-transition names; see OutfitPieces). The DOM has to
+ * change inside the transition callback, hence flushSync.
+ */
 function setMode(mode: Mode) {
   try {
     localStorage.setItem(STORAGE_KEY, mode);
   } catch {
     // Storage blocked: the choice still applies until the page reloads.
   }
-  window.dispatchEvent(new Event(CHANGE_EVENT));
+  const swap = () => flushSync(() => window.dispatchEvent(new Event(CHANGE_EVENT)));
+  if (document.startViewTransition && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.startViewTransition(swap);
+  } else {
+    swap();
+  }
 }
 
 function subscribe(onChange: () => void) {
@@ -54,27 +66,12 @@ export function OutfitViewArea({ children, className }: { children: ReactNode; c
 }
 
 const options = [
-  { value: "grid", label: "Grid", Icon: SquaresFourIcon },
-  { value: "stacked", label: "Stacked", Icon: PersonSimpleIcon },
+  { value: "grid", label: "Grid", icon: SquaresFourIcon },
+  { value: "stacked", label: "Stacked", icon: PersonSimpleIcon },
 ] as const;
 
 /** Grid vs. stacked top-to-toe, remembered across visits. */
 export function OutfitViewToggle({ className }: { className?: string }) {
   const mode = useMode();
-  return (
-    <div role="group" aria-label="Outfit view" className={cn("inline-flex items-center gap-0.5 rounded-full bg-secondary p-1", className)}>
-      {options.map(({ value, label, Icon }) => (
-        <button
-          key={value}
-          type="button"
-          aria-pressed={mode === value}
-          onClick={() => setMode(value)}
-          className="flex h-8 items-center gap-1.5 rounded-full px-3 text-sm font-medium text-muted-foreground transition-[background-color,color,box-shadow] duration-200 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none aria-pressed:bg-card aria-pressed:text-foreground aria-pressed:shadow-print"
-        >
-          <Icon aria-hidden="true" className="size-4" />
-          {label}
-        </button>
-      ))}
-    </div>
-  );
+  return <Segmented label="Outfit view" value={mode} onChange={setMode} options={options} className={className} />;
 }

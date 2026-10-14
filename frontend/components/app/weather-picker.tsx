@@ -7,14 +7,18 @@ import {
   CloudRainIcon,
   CloudSnowIcon,
   CloudSunIcon,
+  MagnifyingGlassIcon,
   MapPinIcon,
+  NavigationArrowIcon,
   SunIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { useEffect, useId, useRef, useState } from "react";
 
 import { Spinner } from "@/components/app/spinner";
-import { buttonSecondary, input, label } from "@/components/app/styles";
+import { input, label } from "@/components/app/styles";
+import { Button } from "@/components/ui/button";
 import type { WeatherReport } from "@/lib/api";
+import { cn } from "@/lib/utils";
 
 type WeatherState =
   | { kind: "idle" }
@@ -27,7 +31,7 @@ export type WeatherChoice = { report: WeatherReport; query: string } | null;
 
 /** Icon for a WMO weather code. */
 function WeatherGlyph({ code }: { code: number }) {
-  const props = { "aria-hidden": true, className: "size-10 shrink-0 text-pop", weight: "duotone" } as const;
+  const props = { "aria-hidden": true, className: "size-11 shrink-0 text-thread", weight: "duotone" } as const;
   if (code === 0) return <SunIcon {...props} />;
   if (code <= 2) return <CloudSunIcon {...props} />;
   if (code === 3) return <CloudIcon {...props} />;
@@ -42,19 +46,19 @@ const degrees = new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 });
 function WeatherCard({ report }: { report: WeatherReport }) {
   const { current, today } = report;
   return (
-    <div className="rounded-(--radius-print) bg-secondary p-4">
+    <div className="enter-rise rounded-(--radius-card) bg-secondary p-4">
       <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
         <MapPinIcon aria-hidden="true" className="size-4 shrink-0" />
         <span className="truncate">{report.location.label ?? "Your location"}</span>
       </p>
-      <div className="mt-3 flex items-center gap-3">
+      <div className="mt-2 flex items-center gap-3">
+        <p className="font-display text-5xl leading-none font-[420] tracking-[-0.02em] tabular-nums">
+          {degrees.format(current.temp_c)}°
+        </p>
         <WeatherGlyph code={current.code} />
-        <div>
-          <p className="text-3xl font-semibold tracking-tight tabular-nums">{degrees.format(current.temp_c)}°C</p>
-          <p className="text-sm">{current.description}</p>
-        </div>
+        <p className="ml-auto text-right text-sm text-pretty">{current.description}</p>
       </div>
-      <dl className="mt-4 grid grid-cols-3 gap-2 text-sm">
+      <dl className="mt-4 grid grid-cols-3 gap-2 border-t border-border pt-3 text-sm">
         <div>
           <dt className="text-muted-foreground">Feels like</dt>
           <dd className="font-medium tabular-nums">{degrees.format(current.feels_like_c)}°</dd>
@@ -149,41 +153,25 @@ export function WeatherPicker({ onChange, initialQuery }: WeatherPickerProps) {
     void load(new URLSearchParams({ q: value }).toString(), "place");
   }
 
+  const placeLoading = loading && weather.source === "place";
+  const locationLoading = loading && weather.source === "location";
+
   return (
     <fieldset className="flex flex-col gap-3">
       <legend className={`${label} mb-2`}>Weather</legend>
-      <button
-        type="button"
-        onClick={locateMe}
-        disabled={loading}
-        aria-busy={(loading && weather.source === "location") || undefined}
-        className={`${buttonSecondary} w-full`}
-      >
-        {loading && weather.source === "location" ? (
-          <Spinner />
-        ) : (
-          <MapPinIcon aria-hidden="true" className="size-4" />
-        )}
-        Use My Location
-      </button>
 
-      <div className="flex items-center gap-3 text-xs text-muted-foreground" aria-hidden="true">
-        <span className="h-px flex-1 bg-border" />
-        or
-        <span className="h-px flex-1 bg-border" />
-      </div>
-
-      <div className="flex flex-col gap-2">
+      <div className="flex gap-2">
         <label htmlFor={`${id}-place`} className="sr-only">
           City or place
         </label>
-        <div className="flex gap-2">
+        <div className="relative min-w-0 flex-1">
           <input
             id={`${id}-place`}
             name="place"
             type="text"
             autoComplete="address-level2"
-            placeholder="City or place, e.g. Pune…"
+            enterKeyHint="search"
+            placeholder="City, e.g. Pune"
             value={place}
             onChange={(event) => setPlace(event.target.value)}
             onKeyDown={(event) => {
@@ -193,19 +181,31 @@ export function WeatherPicker({ onChange, initialQuery }: WeatherPickerProps) {
                 checkPlace();
               }
             }}
-            className={`${input} min-w-0 flex-1`}
+            className={cn(input, "pr-12")}
           />
           <button
             type="button"
             onClick={checkPlace}
             disabled={loading}
-            aria-busy={(loading && weather.source === "place") || undefined}
-            className={buttonSecondary}
+            aria-label="Check the weather there"
+            aria-busy={placeLoading || undefined}
+            className="absolute top-1/2 right-1.5 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-primary text-primary-foreground transition-[scale,opacity] duration-150 active:scale-90 disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
           >
-            {loading && weather.source === "place" && <Spinner />}
-            Check
+            {placeLoading ? <Spinner /> : <MagnifyingGlassIcon aria-hidden="true" className="size-4" weight="bold" />}
           </button>
         </div>
+        <Button
+          variant="secondary"
+          size="icon"
+          onClick={locateMe}
+          disabled={loading}
+          aria-busy={locationLoading || undefined}
+          aria-label="Use my location"
+          title="Use my location"
+          className="size-12"
+        >
+          {locationLoading ? <Spinner /> : <NavigationArrowIcon aria-hidden="true" className="size-5" />}
+        </Button>
       </div>
 
       <div aria-live="polite">

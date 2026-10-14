@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
+import { BackLink } from "@/components/app/back-link";
 import { MatchStudio } from "@/components/app/match-studio";
+import { DirectionalPage } from "@/components/app/page-transition";
 import { StylingSkeleton } from "@/components/app/studio-parts";
 import { requireUser } from "@/lib/dal";
 import { listConnections } from "@/lib/friends";
@@ -16,14 +18,17 @@ async function MatchWithFriends() {
 
 export default function MatchPage() {
   return (
-    <div>
-      <h1 className="type-display text-4xl md:text-5xl">Match with a friend</h1>
-      <p className="mt-2 mb-8 text-pretty text-muted-foreground">
-        Coordinated outfits for the two of you, each from your own wardrobe.
-      </p>
-      <Suspense fallback={<StylingSkeleton columns={2} />}>
-        <MatchWithFriends />
-      </Suspense>
-    </div>
+    <DirectionalPage>
+      <div>
+        <BackLink href="/outfits">Outfits</BackLink>
+        <h1 className="type-title">Match with a friend</h1>
+        <p className="mt-2 mb-8 text-pretty text-muted-foreground">
+          Coordinated outfits for the two of you, each from your own wardrobe.
+        </p>
+        <Suspense fallback={<StylingSkeleton columns={2} />}>
+          <MatchWithFriends />
+        </Suspense>
+      </div>
+    </DirectionalPage>
   );
 }

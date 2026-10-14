@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { useId, useState, useTransition } from "react";
 
 import { Spinner } from "@/components/app/spinner";
-import { buttonPrimary, label, surface, textarea } from "@/components/app/styles";
+import { label, surface, textarea } from "@/components/app/styles";
 import { WeatherPicker, type WeatherChoice } from "@/components/app/weather-picker";
+import { Button } from "@/components/ui/button";
 
 /** Wardrobe-page panel: collects the occasion and weather, then opens the outfit page with them. */
 export function OutfitBuilder() {
@@ -29,9 +30,12 @@ export function OutfitBuilder() {
       }}
       className={`${surface} flex flex-col gap-6`}
     >
-      <h2 id={`${id}-title`} className="font-heading text-2xl font-semibold tracking-tight">
-        Outfit builder
-      </h2>
+      <div>
+        <p className="type-eyebrow text-thread-text">Stylist</p>
+        <h2 id={`${id}-title`} className="type-heading mt-1">
+          What&apos;s today for?
+        </h2>
+      </div>
 
       <div className="flex flex-col gap-2">
         <label htmlFor={`${id}-notes`} className={label}>
@@ -40,26 +44,21 @@ export function OutfitBuilder() {
         <textarea
           id={`${id}-notes`}
           name="notes"
-          rows={4}
+          rows={3}
           maxLength={500}
           value={notes}
           onChange={(event) => setNotes(event.target.value)}
-          placeholder="e.g. Dinner with friends, somewhere a bit dressy…"
+          placeholder="Dinner with friends, somewhere a bit dressy…"
           className={textarea}
         />
       </div>
 
       <WeatherPicker onChange={setWeather} />
 
-      <button
-        type="submit"
-        disabled={opening}
-        aria-busy={opening || undefined}
-        className={`${buttonPrimary} h-12 w-full text-[15px]`}
-      >
-        {opening ? <Spinner /> : <SparkleIcon aria-hidden="true" className="size-4" weight="fill" />}
+      <Button type="submit" size="lg" disabled={opening} aria-busy={opening || undefined} className="w-full">
+        {opening ? <Spinner /> : <SparkleIcon aria-hidden="true" weight="fill" />}
         {opening ? "Building…" : "Build Outfit"}
-      </button>
+      </Button>
     </form>
   );
 }

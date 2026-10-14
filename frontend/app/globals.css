@@ -20,48 +20,37 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-heading: var(--font-outfit), var(--font-geist), sans-serif;
-  --color-pop: var(--pop);
-  --color-pop-foreground: var(--pop-foreground);
-  --color-print: var(--print);
-  --color-print-foreground: var(--print-foreground);
-  --color-rose: var(--rose);
-  --color-peach: var(--peach);
-  --color-orchid: var(--orchid);
-  --color-violet: var(--violet);
-  --color-swatch-ink: var(--swatch-ink);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-thread: var(--thread);
+  --color-thread-text: var(--thread-text);
+  --color-thread-on-primary: var(--thread-on-primary);
+  --color-sage: var(--sage);
+  --color-clay: var(--clay);
+  --color-chambray: var(--chambray);
+  --color-butter: var(--butter);
+  --color-swatch-ink: var(--swatch-ink);
+
+  /* System UI text (SF on Apple, Segoe on Windows, Roboto on Android); Fraunces for display. */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -69,140 +58,109 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
-  --ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-spring: cubic-bezier(0.34, 1.36, 0.64, 1);
+
+  /* Strong curves: ease-out for enter/exit and press, ease-in-out for on-screen movement,
+     the iOS drawer curve for sheets. These replace Tailwind's weaker defaults. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --default-transition-duration: 200ms;
+  --default-transition-timing-function: var(--ease-out);
 }
 
 /*
- * Hydrangea palette: rose #FF8DA1, peach #FFC2BA, orchid #FF9CE9,
- * violet #AD56C4, over a pink-white canvas and plum ink.
- * Violet is too mid-toned for small text (4.1:1 on white), so it carries
- * large display type, fills and icons; buttons use a deeper violet.
- * Shape rule: controls are pills, every surface uses --radius-surface,
- * prints nested in a surface use --radius-print.
+ * Linen & Denim: a warm linen canvas, denim-ink type, an indigo primary and one
+ * tailor's-thread accent. Swatches (sage, clay, chambray, butter) are textile tones
+ * for placeholders and monograms. Every text pair is checked to WCAG AA; the
+ * thread colour carries large type and marks only, small text uses --thread-text.
+ * Shape rule: controls are pills, surfaces use --radius-surface, cards --radius-card.
  */
 :root {
-  --rose: #ff8da1;
-  --peach: #ffc2ba;
-  --orchid: #ff9ce9;
-  --violet: #ad56c4;
-  /* Text and icons placed on rose, peach or orchid. */
-  --swatch-ink: oklch(0.23 0.06 320);
-
-  --background: oklch(0.985 0.008 350);
-  --foreground: oklch(0.23 0.06 320);
-  --card: oklch(0.998 0.003 350);
-  --card-foreground: oklch(0.23 0.06 320);
-  --popover: oklch(0.998 0.003 350);
-  --popover-foreground: oklch(0.23 0.06 320);
-  --primary: oklch(0.52 0.17 318);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.955 0.022 350);
-  --secondary-foreground: oklch(0.23 0.06 320);
-  --muted: oklch(0.955 0.022 350);
-  --muted-foreground: oklch(0.46 0.05 320);
-  --accent: oklch(0.955 0.022 350);
-  --accent-foreground: oklch(0.23 0.06 320);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.23 0.06 320 / 11%);
-  --input: oklch(0.23 0.06 320 / 18%);
-  --ring: oklch(0.52 0.17 318);
-  --pop: var(--violet);
-  --pop-foreground: oklch(1 0 0);
-  --print: oklch(0.998 0.003 350);
-  --print-foreground: oklch(0.23 0.06 320);
-  --shadow-tint: oklch(0.35 0.1 320 / 0.18);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --radius-surface: 1.75rem;
-  --radius-print: 1rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: oklch(0.975 0.012 85);
+  --foreground: oklch(0.24 0.045 262);
+  --card: oklch(0.995 0.004 85);
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --primary: oklch(0.31 0.075 262);
+  --primary-foreground: oklch(0.985 0.006 85);
+  --secondary: oklch(0.945 0.016 85);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--secondary);
+  --muted-foreground: oklch(0.48 0.03 262);
+  --accent: var(--secondary);
+  --accent-foreground: var(--foreground);
+  --destructive: oklch(0.52 0.19 22);
+  --destructive-foreground: oklch(0.985 0.006 85);
+  --border: oklch(0.24 0.045 262 / 12%);
+  --input: oklch(0.24 0.045 262 / 20%);
+  --ring: oklch(0.31 0.075 262);
+  --thread: oklch(0.62 0.17 40);
+  --thread-text: oklch(0.53 0.17 38);
+  /* The accent on an inverted (primary) surface. */
+  --thread-on-primary: oklch(0.8 0.12 55);
+  --sage: oklch(0.86 0.045 145);
+  --clay: oklch(0.83 0.06 45);
+  --chambray: oklch(0.84 0.045 245);
+  --butter: oklch(0.93 0.07 95);
+  --swatch-ink: var(--foreground);
+  --shadow-tint: oklch(0.24 0.045 262 / 0.12);
+  --glass-alpha: 72%;
+  --radius: 0.75rem;
+  --radius-surface: 1.25rem;
+  --radius-card: 0.875rem;
   color-scheme: light dark;
 }
 
 /* Keep these two dark blocks identical: OS-dark (unless forced light), and forced dark. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --background: oklch(0.165 0.03 320);
-    --foreground: oklch(0.965 0.01 350);
-    --card: oklch(0.21 0.04 320);
-    --card-foreground: oklch(0.965 0.01 350);
-    --popover: oklch(0.21 0.04 320);
-    --popover-foreground: oklch(0.965 0.01 350);
-    --primary: var(--orchid);
-    --primary-foreground: oklch(0.23 0.06 320);
-    --secondary: oklch(0.245 0.045 320);
-    --secondary-foreground: oklch(0.965 0.01 350);
-    --muted: oklch(0.245 0.045 320);
-    --muted-foreground: oklch(0.78 0.03 340);
-    --accent: oklch(0.245 0.045 320);
-    --accent-foreground: oklch(0.965 0.01 350);
-    --destructive: oklch(0.704 0.191 22.216);
-    --destructive-foreground: oklch(0.23 0.06 320);
-    --border: oklch(0.965 0.01 350 / 10%);
-    --input: oklch(0.965 0.01 350 / 16%);
-    --ring: var(--orchid);
-    --pop: var(--orchid);
-    --pop-foreground: oklch(0.23 0.06 320);
-    --print: oklch(0.255 0.045 320);
-    --print-foreground: oklch(0.965 0.01 350);
-    --shadow-tint: oklch(0.05 0.03 320 / 0.6);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    --background: oklch(0.19 0.025 262);
+    --foreground: oklch(0.95 0.012 85);
+    --card: oklch(0.225 0.03 262);
+    --primary: oklch(0.95 0.012 85);
+    --primary-foreground: oklch(0.22 0.045 262);
+    --secondary: oklch(0.265 0.03 262);
+    --muted-foreground: oklch(0.76 0.02 262);
+    --destructive: oklch(0.71 0.17 22);
+    --destructive-foreground: oklch(0.19 0.025 262);
+    --border: oklch(0.95 0.012 85 / 10%);
+    --input: oklch(0.95 0.012 85 / 18%);
+    --ring: oklch(0.82 0.06 262);
+    --thread: oklch(0.75 0.14 48);
+    --thread-text: oklch(0.75 0.14 48);
+    --thread-on-primary: oklch(0.52 0.17 36);
+    --sage: oklch(0.42 0.045 145);
+    --clay: oklch(0.42 0.06 45);
+    --chambray: oklch(0.4 0.05 245);
+    --butter: oklch(0.48 0.06 95);
+    --shadow-tint: oklch(0.05 0.02 262 / 0.55);
+    --glass-alpha: 82%;
   }
 }
 
 :root[data-theme="dark"] {
-  --background: oklch(0.165 0.03 320);
-  --foreground: oklch(0.965 0.01 350);
-  --card: oklch(0.21 0.04 320);
-  --card-foreground: oklch(0.965 0.01 350);
-  --popover: oklch(0.21 0.04 320);
-  --popover-foreground: oklch(0.965 0.01 350);
-  --primary: var(--orchid);
-  --primary-foreground: oklch(0.23 0.06 320);
-  --secondary: oklch(0.245 0.045 320);
-  --secondary-foreground: oklch(0.965 0.01 350);
-  --muted: oklch(0.245 0.045 320);
-  --muted-foreground: oklch(0.78 0.03 340);
-  --accent: oklch(0.245 0.045 320);
-  --accent-foreground: oklch(0.965 0.01 350);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.23 0.06 320);
-  --border: oklch(0.965 0.01 350 / 10%);
-  --input: oklch(0.965 0.01 350 / 16%);
-  --ring: var(--orchid);
-  --pop: var(--orchid);
-  --pop-foreground: oklch(0.23 0.06 320);
-  --print: oklch(0.255 0.045 320);
-  --print-foreground: oklch(0.965 0.01 350);
-  --shadow-tint: oklch(0.05 0.03 320 / 0.6);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: oklch(0.19 0.025 262);
+  --foreground: oklch(0.95 0.012 85);
+  --card: oklch(0.225 0.03 262);
+  --primary: oklch(0.95 0.012 85);
+  --primary-foreground: oklch(0.22 0.045 262);
+  --secondary: oklch(0.265 0.03 262);
+  --muted-foreground: oklch(0.76 0.02 262);
+  --destructive: oklch(0.71 0.17 22);
+  --destructive-foreground: oklch(0.19 0.025 262);
+  --border: oklch(0.95 0.012 85 / 10%);
+  --input: oklch(0.95 0.012 85 / 18%);
+  --ring: oklch(0.82 0.06 262);
+  --thread: oklch(0.75 0.14 48);
+  --thread-text: oklch(0.75 0.14 48);
+  --thread-on-primary: oklch(0.52 0.17 36);
+  --sage: oklch(0.42 0.045 145);
+  --clay: oklch(0.42 0.06 45);
+  --chambray: oklch(0.4 0.05 245);
+  --butter: oklch(0.48 0.06 95);
+  --shadow-tint: oklch(0.05 0.02 262 / 0.55);
+  --glass-alpha: 82%;
 }
 
 :root[data-theme="light"] {
@@ -231,113 +189,594 @@
   label {
     touch-action: manipulation;
   }
-
-  /*
-   * Paper grain so the flat pastels don't feel sterile. Fixed and
-   * non-interactive, so it never repaints while scrolling.
-   */
-  body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 50;
-    pointer-events: none;
-    opacity: var(--grain-opacity);
-    mix-blend-mode: var(--grain-blend, multiply);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* Controls aren't content: a long press shouldn't select their label or pop a callout. */
+  button,
+  [role="button"] {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  /* 16px minimum, or iOS zooms the page on focus and never zooms back out. */
+  input,
+  textarea,
+  select {
+    font-size: max(1rem, 16px);
   }
 }
 
-:root {
-  --grain-opacity: 0.07;
-}
+/* ---------- Type: every heading is the same face (Fraunces, one weight, upright); only size, tracking
+   and leading change per tier. Optical size follows the text size. */
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --grain-opacity: 0.12;
-    --grain-blend: soft-light;
-  }
-}
-
-:root[data-theme="dark"] {
-  --grain-opacity: 0.12;
-  --grain-blend: soft-light;
-}
-
-@media (prefers-reduced-transparency: reduce) {
-  :root {
-    --grain-opacity: 0.03;
-  }
-}
-
-/* Display type: Outfit, heavy and tightly tracked. */
-@utility type-display {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: 0.95;
+@utility type-hero {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 30;
+  font-weight: 460;
+  font-size: clamp(3rem, 1.4rem + 6vw, 6.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
 
-@utility shadow-print {
+@utility type-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 30;
+  font-weight: 460;
+  font-size: clamp(2.5rem, 1.75rem + 2.6vw, 3.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+@utility type-title {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 30;
+  font-weight: 460;
+  font-size: clamp(1.875rem, 1.6rem + 1vw, 2.375rem);
+  line-height: 1.1;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+@utility type-heading {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 30;
+  font-weight: 460;
+  font-size: 1.375rem;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+}
+
+/* Small caps-style labels: small text wants positive tracking. */
+@utility type-eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---------- Materials */
+
+/* Translucent chrome: content scrolls underneath and stays faintly visible. */
+@utility glass {
+  /* Mixed in sRGB: mixing with transparent in oklch would pull the hue toward red. */
+  background-color: color-mix(in srgb, var(--background) var(--glass-alpha), transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(130%);
+  backdrop-filter: blur(20px) saturate(130%);
+
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: var(--background);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  @media (prefers-contrast: more) {
+    background-color: var(--background);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-color: var(--foreground);
+  }
+}
+
+/* A soft fade where content meets floating chrome, instead of a hairline border. */
+@utility scroll-edge-b {
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    height: 0.75rem;
+    pointer-events: none;
+    background: linear-gradient(color-mix(in srgb, var(--background) 70%, transparent), transparent);
+  }
+}
+
+@utility scroll-edge-t {
+  &::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 100%;
+    height: 0.75rem;
+    pointer-events: none;
+    background: linear-gradient(transparent, color-mix(in srgb, var(--background) 70%, transparent));
+  }
+}
+
+@utility shadow-card {
   box-shadow:
-    0 1px 2px var(--shadow-tint),
-    0 18px 36px -20px var(--shadow-tint);
+    0 1px 1px var(--shadow-tint),
+    0 12px 28px -18px var(--shadow-tint);
+}
+
+@utility shadow-lift {
+  box-shadow:
+    0 2px 4px var(--shadow-tint),
+    0 28px 48px -24px var(--shadow-tint);
+}
+
+/* ---------- Motion */
+
+/*
+ * Entrance for content that appears after the page has loaded (a styling result, a newly
+ * added piece). Transitions, not keyframes, so a quick re-render retargets instead of restarting.
+ */
+@utility enter-rise {
+  transition:
+    opacity 300ms var(--ease-out),
+    translate 300ms var(--ease-out),
+    scale 300ms var(--ease-out),
+    filter 300ms var(--ease-out);
+  transition-delay: var(--delay, 0ms);
+
+  @starting-style {
+    opacity: 0;
+    translate: 0 8px;
+    filter: blur(3px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    translate: none;
+    filter: none;
+  }
 }
 
 @keyframes rise {
   from {
     opacity: 0;
-    translate: 0 18px;
+    translate: 0 24px;
   }
 }
 
-@keyframes print-drop {
-  from {
+/* Camera: each countdown number lands, holds, and lets go. */
+@keyframes countdown-tick {
+  0% {
     opacity: 0;
-    translate: 0 40px;
-    rotate: calc(var(--tilt, 0deg) + 7deg);
-    scale: 0.96;
+    scale: 1.35;
   }
-}
-
-@keyframes swap-in {
-  from {
+  22% {
+    opacity: 1;
+    scale: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
     opacity: 0;
-    translate: 0 14px;
-    rotate: calc(var(--tilt, 0deg) - 4deg);
+    scale: 0.9;
   }
 }
 
-/*
- * Motion only when the visitor hasn't asked for less. `backwards` fill
- * hands control back to the base styles afterwards, so hover still works.
- */
+@keyframes shutter-flash {
+  from {
+    opacity: 0.85;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Motion only when the visitor hasn't asked for less. */
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
   }
 
+  /* First-load entrance for the landing hero only (marketing, seen once). */
   .animate-rise {
-    animation: rise 0.9s var(--ease-soft) backwards;
+    animation: rise 0.7s var(--ease-out) backwards;
     animation-delay: var(--delay, 0ms);
   }
 
-  .animate-print {
-    animation: print-drop 1.1s var(--ease-soft) backwards;
-    animation-delay: var(--delay, 0ms);
-  }
-
-  .animate-swap {
-    animation: swap-in 0.6s var(--ease-soft) backwards;
-    animation-delay: var(--delay, 0ms);
-  }
-
+  /* Scroll-linked: progress follows the scroll position 1:1, so it's linear. */
   @supports (animation-timeline: view()) {
     .reveal {
       animation: rise linear both;
       animation-timeline: view();
-      animation-range: entry 5% cover 25%;
+      animation-range: entry 0% cover 22%;
     }
+  }
+}
+
+/* ---------- Sheets (components/ui/sheet.tsx, Base UI Drawer) */
+
+@layer components {
+  .sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    min-height: 100dvh;
+    background: oklch(0.1 0.03 262);
+    /* Fades with the swipe, so dragging the sheet down reveals the page progressively. */
+    opacity: calc(0.45 * (1 - var(--drawer-swipe-progress, 0)));
+    transition: opacity 450ms var(--ease-drawer);
+
+    /* iOS 26+: cover the whole visible viewport. */
+    @supports (-webkit-touch-callout: none) {
+      position: absolute;
+    }
+    &[data-swiping] {
+      transition-duration: 0ms;
+    }
+    &[data-starting-style],
+    &[data-ending-style] {
+      opacity: 0;
+    }
+    &[data-ending-style] {
+      transition-duration: calc(var(--drawer-swipe-strength, 1) * 400ms);
+    }
+  }
+
+  .sheet-viewport {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    @media (min-width: 640px) {
+      align-items: center;
+      padding: 1.5rem;
+    }
+  }
+
+  .sheet-popup {
+    /* Extra sheet below the screen edge, so an upward over-drag never shows a gap. */
+    --bleed: 3rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-height: calc(92dvh + var(--bleed));
+    margin-bottom: calc(-1 * var(--bleed));
+    padding-bottom: calc(var(--bleed) + max(1.25rem, env(safe-area-inset-bottom, 0px)));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    touch-action: auto;
+    border-radius: var(--radius-surface) var(--radius-surface) 0 0;
+    background: var(--card);
+    color: var(--card-foreground);
+    box-shadow: 0 -16px 48px -20px var(--shadow-tint);
+    outline: none;
+    transform: translateY(var(--drawer-swipe-movement-y, 0px));
+    transition: transform 450ms var(--ease-drawer);
+
+    &[data-swiping] {
+      user-select: none;
+    }
+    &[data-starting-style],
+    &[data-ending-style] {
+      transform: translateY(calc(100% - var(--bleed) + 2px));
+    }
+    /* A fast flick finishes fast; a slow drag settles slowly. */
+    &[data-ending-style] {
+      transition-duration: calc(var(--drawer-swipe-strength, 1) * 400ms);
+    }
+    &[data-size="full"] {
+      height: calc(100dvh - max(0.75rem, env(safe-area-inset-top, 0px)) + var(--bleed));
+      max-height: none;
+    }
+    &[data-tone="dark"] {
+      background: oklch(0.16 0.02 262);
+      color: oklch(0.97 0.01 85);
+    }
+
+    @media (min-width: 640px) {
+      --bleed: 0px;
+      width: min(32rem, 100%);
+      max-height: 88dvh;
+      padding-bottom: 1.5rem;
+      border-radius: var(--radius-surface);
+      box-shadow:
+        0 0 0 1px var(--border),
+        0 32px 80px -32px var(--shadow-tint);
+      transition:
+        transform 320ms var(--ease-out),
+        opacity 200ms var(--ease-out);
+
+      /* A centred dialog isn't anchored to anything: it grows from its own centre. */
+      &[data-starting-style],
+      &[data-ending-style] {
+        opacity: 0;
+        transform: scale(0.96);
+      }
+      &[data-ending-style] {
+        transition-duration: 160ms;
+      }
+      &[data-size="full"] {
+        width: min(36rem, 100%);
+        height: auto;
+        max-height: 92dvh;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: opacity 200ms ease;
+      &[data-starting-style],
+      &[data-ending-style] {
+        opacity: 0;
+        transform: translateY(var(--drawer-swipe-movement-y, 0px));
+      }
+    }
+  }
+
+  .sheet-handle {
+    flex: none;
+    width: 2.25rem;
+    height: 0.3125rem;
+    margin: 0.5rem auto 0;
+    border-radius: 999px;
+    background: color-mix(in srgb, currentColor 22%, transparent);
+
+    @media (min-width: 640px) {
+      display: none;
+    }
+  }
+
+  /* The page recedes while a sheet is open: phones only, and only with motion allowed. */
+  .sheet-indent {
+    min-height: 100dvh;
+    background: var(--background);
+  }
+  .sheet-indent-background {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: oklch(0.1 0.03 262);
+    display: none;
+  }
+  @media (max-width: 639px) and (prefers-reduced-motion: no-preference) {
+    .sheet-indent-background[data-active] {
+      display: block;
+    }
+    .sheet-indent {
+      transform-origin: 50% var(--indent-origin-y, 50vh);
+      transition: transform 450ms var(--ease-drawer);
+      &[data-active] {
+        transform: scale(calc(0.94 + 0.06 * var(--drawer-swipe-progress, 0)));
+      }
+    }
+  }
+
+  /* ---------- Toasts (components/ui/toaster.tsx, Base UI Toast) */
+
+  .toast-viewport {
+    position: fixed;
+    z-index: 70;
+    inset-inline: 0;
+    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    width: min(24rem, calc(100vw - 2rem));
+    margin-inline: auto;
+
+    @media (min-width: 640px) {
+      inset-inline: auto 1.5rem;
+      bottom: 1.5rem;
+    }
+  }
+  /* Sit above the phone tab bar when there is one. */
+  @media (max-width: 1023px) {
+    html:has([data-tab-bar]) .toast-viewport {
+      bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
+    }
+  }
+
+  .toast {
+    --gap: 0.625rem;
+    --peek: 0.625rem;
+    --scale: calc(max(0, 1 - (var(--toast-index) * 0.06)));
+    --shrink: calc(1 - var(--scale));
+    --height: var(--toast-frontmost-height, var(--toast-height));
+    --offset-y: calc(
+      var(--toast-offset-y) * -1 + (var(--toast-index) * var(--gap) * -1) + var(--toast-swipe-movement-y)
+    );
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: calc(1000 - var(--toast-index));
+    height: var(--height);
+    border-radius: 1.25rem;
+    background: var(--card);
+    color: var(--card-foreground);
+    box-shadow:
+      0 0 0 1px var(--border),
+      0 18px 40px -18px var(--shadow-tint);
+    user-select: none;
+    transform-origin: bottom center;
+    transform: translateX(var(--toast-swipe-movement-x))
+      translateY(calc(var(--toast-swipe-movement-y) - (var(--toast-index) * var(--peek)) - (var(--shrink) * var(--height))))
+      scale(var(--scale));
+    transition:
+      transform 450ms var(--ease-out),
+      opacity 300ms var(--ease-out),
+      height 150ms var(--ease-out);
+
+    /* Fills the gap between stacked toasts so hovering across them keeps the stack open. */
+    &::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      height: calc(var(--gap) + 1px);
+    }
+    &[data-expanded] {
+      height: var(--toast-height);
+      transform: translateX(var(--toast-swipe-movement-x)) translateY(var(--offset-y));
+    }
+    &[data-starting-style],
+    &[data-ending-style] {
+      transform: translateY(150%);
+    }
+    &[data-limited] {
+      opacity: 0;
+    }
+    &[data-ending-style] {
+      opacity: 0;
+      &[data-swipe-direction="up"] {
+        transform: translateY(calc(var(--toast-swipe-movement-y) - 150%));
+      }
+      &[data-swipe-direction="down"] {
+        transform: translateY(calc(var(--toast-swipe-movement-y) + 150%));
+      }
+      &[data-swipe-direction="left"] {
+        transform: translateX(calc(var(--toast-swipe-movement-x) - 150%)) translateY(var(--offset-y));
+      }
+      &[data-swipe-direction="right"] {
+        transform: translateX(calc(var(--toast-swipe-movement-x) + 150%)) translateY(var(--offset-y));
+      }
+    }
+    &:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      &[data-starting-style],
+      &[data-ending-style] {
+        transform: none;
+      }
+    }
+  }
+
+  .toast-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0.75rem 0.75rem 1rem;
+    overflow: hidden;
+    transition: opacity 250ms var(--ease-out);
+
+    &[data-behind] {
+      opacity: 0;
+    }
+    &[data-expanded] {
+      opacity: 1;
+    }
+  }
+}
+
+/* ---------- View transitions (theme switch, page navigation, grid/stacked morph) */
+
+/* Clicks during a transition reach the live page instead of the snapshot overlay. */
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 250ms;
+  animation-timing-function: var(--ease-out);
+}
+
+/* Persistent chrome stays put while the content beneath it moves. */
+::view-transition-group(app-chrome),
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(app-chrome),
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(app-chrome),
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+/* Deeper into the app slides left, back out slides right. */
+::view-transition-old(.nav-forward) {
+  --slide-offset: -60px;
+  animation:
+    150ms var(--ease-out) both vt-fade reverse,
+    400ms var(--ease-in-out) both vt-slide reverse;
+}
+::view-transition-new(.nav-forward) {
+  --slide-offset: 60px;
+  animation:
+    210ms var(--ease-out) 150ms both vt-fade,
+    400ms var(--ease-in-out) both vt-slide;
+}
+::view-transition-old(.nav-back) {
+  --slide-offset: 60px;
+  animation:
+    150ms var(--ease-out) both vt-fade reverse,
+    400ms var(--ease-in-out) both vt-slide reverse;
+}
+::view-transition-new(.nav-back) {
+  --slide-offset: -60px;
+  animation:
+    210ms var(--ease-out) 150ms both vt-fade,
+    400ms var(--ease-in-out) both vt-slide;
+}
+
+/* Same place, different content (a filter changing): a quick cross-fade. */
+::view-transition-old(.swap) {
+  animation: 120ms var(--ease-out) both vt-fade reverse;
+}
+::view-transition-new(.swap) {
+  animation: 200ms var(--ease-out) 60ms both vt-fade;
+}
+
+/* One object moving between layouts; a little blur hides the interpolation. */
+::view-transition-group(.morph) {
+  animation-duration: 380ms;
+  animation-timing-function: var(--ease-in-out);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: vt-via-blur;
+}
+
+@keyframes vt-fade {
+  from {
+    opacity: 0;
+    filter: blur(3px);
+  }
+}
+
+@keyframes vt-slide {
+  from {
+    translate: var(--slide-offset);
+  }
+}
+
+@keyframes vt-via-blur {
+  30% {
+    filter: blur(3px);
+  }
+}
+
+/* Reduced motion: keep the cross-fades, drop every positional move. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+  }
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    --slide-offset: 0px;
   }
 }
