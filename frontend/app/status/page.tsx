@@ -34,16 +34,17 @@ function describe(result: HealthResult) {
   };
 }
 
+// A real state indicator, so it uses the colours people already read as up / waiting / down.
 const toneDot = {
-  up: "bg-pop",
-  waiting: "bg-peach",
-  down: "bg-destructive",
+  up: "bg-emerald-500 shadow-[0_0_0_4px_oklch(0.7_0.15_155/0.2)]",
+  waiting: "bg-amber-400 shadow-[0_0_0_4px_oklch(0.8_0.15_80/0.25)]",
+  down: "bg-destructive shadow-[0_0_0_4px_oklch(0.6_0.2_25/0.2)]",
 };
 
 function Card({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-(--radius-surface) bg-foreground/[0.035] p-2 ring-1 ring-border">
-      <div className="rounded-[calc(var(--radius-surface)-0.5rem)] bg-card p-6 shadow-print md:p-8">
+    <div className="rounded-[calc(var(--radius-surface)+0.5rem)] bg-secondary p-2">
+      <div className="rounded-(--radius-surface) bg-card p-6 shadow-card md:p-8">
         {children}
       </div>
     </div>
@@ -74,7 +75,7 @@ async function HealthPanel() {
   return (
     <Card>
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <p className="flex items-center gap-3 text-2xl font-semibold tracking-tight" role="status">
+        <p className="type-heading flex items-center gap-3" role="status">
           {/* Real state indicator, not decoration. */}
           <span aria-hidden="true" className={cn("size-3 rounded-full", toneDot[tone])} />
           {label}
@@ -91,8 +92,8 @@ async function HealthPanel() {
       </dl>
 
       {result.ok && (
-        <figure className="mt-8 rounded-(--radius-print) bg-secondary px-5 py-4">
-          <blockquote className="text-lg">“{result.data.message}”</blockquote>
+        <figure className="mt-8 rounded-(--radius-card) bg-secondary px-5 py-4">
+          <blockquote className="font-display text-xl">“{result.data.message}”</blockquote>
           <figcaption className="mt-1 text-sm text-muted-foreground">Message from the server</figcaption>
         </figure>
       )}
@@ -116,7 +117,7 @@ function HealthSkeleton() {
             </div>
           ))}
         </div>
-        <div className="mt-8 h-20 rounded-(--radius-print) bg-muted" />
+        <div className="mt-8 h-20 rounded-(--radius-card) bg-muted" />
       </div>
       <p className="sr-only" role="status">
         Checking the API…
@@ -130,7 +131,8 @@ export default function StatusPage() {
     <>
       <SiteHeader />
       <main className="mx-auto max-w-3xl px-4 pt-12 pb-24 sm:px-6 md:pt-20 md:pb-32">
-        <h1 className="type-display text-5xl md:text-6xl">API status</h1>
+        <p className="type-eyebrow text-thread-text">Status</p>
+        <h1 className="type-display mt-4">API status</h1>
         <p className="mt-5 max-w-[52ch] text-lg leading-relaxed text-pretty text-muted-foreground">
           Live health of the segmentation API that finds and cuts out each garment.
         </p>
@@ -141,7 +143,7 @@ export default function StatusPage() {
             target="_blank"
             rel="noopener noreferrer"
             translate="no"
-            className="rounded-sm font-mono break-all text-foreground underline decoration-foreground/25 underline-offset-4 hover:decoration-pop focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            className="rounded-sm font-mono break-all text-foreground underline decoration-foreground/25 underline-offset-4 hover:decoration-thread focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
           >
             {API_URL.replace("https://", "")}/health
           </a>

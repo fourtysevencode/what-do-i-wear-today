@@ -1,4 +1,3 @@
-import { TShirtIcon } from "@phosphor-icons/react/dist/ssr";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
@@ -12,14 +11,18 @@ export const metadata: Metadata = { title: "Wardrobe · What do I wear today?" }
 
 function EmptyWardrobe() {
   return (
-    <div className="flex flex-col items-center rounded-(--radius-surface) border border-dashed border-foreground/15 px-6 py-16 text-center">
-      <span className="flex size-14 items-center justify-center rounded-full bg-orchid text-swatch-ink">
-        <TShirtIcon aria-hidden="true" className="size-7" />
-      </span>
-      <h2 className="mt-5 font-heading text-xl font-semibold tracking-tight">Add your first piece</h2>
-      <p className="mt-2 max-w-[38ch] text-pretty text-muted-foreground">
-        Take a mirror photo and choose Add Clothing. Each garment is cut out, labelled and saved here.
+    <div className="flex flex-col items-center rounded-(--radius-surface) border border-dashed border-foreground/15 px-6 py-14 text-center">
+      {/* Three blank cards fanned out: the wardrobe waiting to be filled. */}
+      <div aria-hidden="true" className="relative h-28 w-40">
+        <span className="absolute top-2 left-3 h-24 w-[4.5rem] -rotate-6 rounded-(--radius-card) bg-sage shadow-card" />
+        <span className="absolute top-2 right-3 h-24 w-[4.5rem] rotate-6 rounded-(--radius-card) bg-clay shadow-card" />
+        <span className="absolute top-0 left-1/2 h-24 w-[4.5rem] -translate-x-1/2 rounded-(--radius-card) bg-chambray shadow-lift" />
+      </div>
+      <h2 className="type-heading mt-6">Your wardrobe is empty</h2>
+      <p className="mt-2 max-w-[36ch] text-pretty text-muted-foreground">
+        Take a mirror photo of what you&apos;re wearing. Each garment is found, cut out and saved here.
       </p>
+      <AddClothing className="mt-6 justify-center" />
     </div>
   );
 }
@@ -32,23 +35,24 @@ async function MyWardrobe() {
 
 export default function WardrobePage() {
   return (
-    <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_22rem] xl:gap-12">
+    <div className="grid gap-12 xl:grid-cols-[minmax(0,1fr)_22rem] xl:gap-12">
       <section aria-labelledby="wardrobe-title" className="min-w-0">
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h1 id="wardrobe-title" className="type-display text-4xl md:text-5xl">
-              Your wardrobe
+            <h1 id="wardrobe-title" className="type-title">
+              Wardrobe
             </h1>
-            <p className="mt-2 text-muted-foreground">Everything you own, cut out and sorted.</p>
+            <p className="mt-1 text-muted-foreground">Everything you own, cut out and sorted. Tap a piece to edit it.</p>
           </div>
-          <AddClothing />
+          {/* Phones add from the tab bar's centre button, desktops from the sidebar. */}
+          <AddClothing className="max-sm:hidden lg:hidden" />
         </div>
         <Suspense fallback={<WardrobeGridSkeleton />}>
           <MyWardrobe />
         </Suspense>
       </section>
 
-      <aside aria-label="Outfit builder" className="xl:sticky xl:top-10 xl:self-start">
+      <aside aria-label="Outfit builder" className="xl:sticky xl:top-12 xl:self-start">
         <OutfitBuilder />
       </aside>
     </div>

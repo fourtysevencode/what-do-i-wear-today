@@ -1,5 +1,5 @@
-/** Surface colours only; violet is reserved for accents and interaction. */
-export type Swatch = "rose" | "peach" | "orchid";
+/** Textile tones behind a photo while it loads, and for placeholders. */
+export type Swatch = "sage" | "clay" | "chambray" | "butter";
 
 export type Garment = {
   name: string;
@@ -18,7 +18,7 @@ const pexels = (id: number) =>
 export const buttonDown: Garment = {
   name: "Button-down",
   kind: "top",
-  swatch: "orchid",
+  swatch: "chambray",
   photo: { src: pexels(22441278), position: "50% 40%" },
 };
 
@@ -26,7 +26,7 @@ export const buttonDown: Garment = {
 export const trousers: Garment = {
   name: "Dark trousers",
   kind: "bottom",
-  swatch: "peach",
+  swatch: "clay",
   photo: { src: pexels(39457561), position: "50% 35%" },
 };
 
@@ -34,7 +34,7 @@ export const trousers: Garment = {
 export const floralBlouse: Garment = {
   name: "Floral blouse",
   kind: "top",
-  swatch: "rose",
+  swatch: "sage",
   photo: { src: pexels(19895953) },
 };
 
@@ -42,7 +42,7 @@ export const floralBlouse: Garment = {
 export const darkJeans: Garment = {
   name: "Dark jeans",
   kind: "bottom",
-  swatch: "peach",
+  swatch: "butter",
   photo: { src: pexels(1082528), position: "82% 50%" },
 };
 

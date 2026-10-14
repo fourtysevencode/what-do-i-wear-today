@@ -5,7 +5,8 @@ import { Suspense } from "react";
 import { adminLogout } from "@/app/fourtysevencode/actions";
 import { AdminLogin } from "@/app/fourtysevencode/admin-login";
 import { SubmitButton } from "@/components/app/submit-button";
-import { buttonSmall, surface } from "@/components/app/styles";
+import { surface } from "@/components/app/styles";
+import { buttonVariants } from "@/components/ui/button";
 import { getAdminStats, isAdmin } from "@/lib/admin";
 import { cn } from "@/lib/utils";
 
@@ -22,7 +23,7 @@ function StatTile({ label, value, hint }: { label: string; value: number; hint?:
   return (
     <div className={surface}>
       <p className="text-sm text-muted-foreground">{label}</p>
-      <p className="mt-2 font-heading text-4xl font-semibold tracking-tight tabular-nums">{count.format(value)}</p>
+      <p className="mt-2 font-display text-4xl font-medium tracking-[-0.02em] tabular-nums">{count.format(value)}</p>
       {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
     </div>
   );
@@ -52,7 +53,7 @@ async function Dashboard() {
       </div>
 
       <section aria-labelledby="users-title" className={cn(surface, "mt-6 overflow-x-auto p-0 md:p-0")}>
-        <h2 id="users-title" className="px-5 pt-5 font-heading text-lg font-semibold tracking-tight md:px-6">
+        <h2 id="users-title" className="type-heading px-5 pt-5 md:px-6">
           Users <span className="font-sans text-sm font-normal text-muted-foreground tabular-nums">{users.length}</span>
         </h2>
         <table className="mt-3 w-full text-sm">
@@ -82,7 +83,7 @@ async function Dashboard() {
       </section>
 
       <form action={adminLogout} className="mt-6">
-        <SubmitButton pendingLabel="Locking…" className={cn(buttonSmall, "border border-foreground/15 hover:bg-foreground/5")}>
+        <SubmitButton pendingLabel="Locking…" className={buttonVariants({ variant: "secondary", size: "sm" })}>
           Lock
         </SubmitButton>
       </form>
@@ -93,7 +94,7 @@ async function Dashboard() {
 export default function AdminPage() {
   return (
     <main className="mx-auto min-h-dvh max-w-5xl px-4 py-12 sm:px-6 md:py-16">
-      <h1 className="type-display text-4xl md:text-5xl">Stats</h1>
+      <h1 className="type-title">Stats</h1>
       <p className="mt-2 mb-8 text-muted-foreground">Everyone using What do I wear today.</p>
       <Suspense fallback={<div aria-hidden="true" className="h-40 animate-pulse rounded-(--radius-surface) bg-muted motion-reduce:animate-none" />}>
         <Dashboard />

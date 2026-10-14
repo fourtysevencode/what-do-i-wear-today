@@ -15,9 +15,11 @@ import {
   StylingStatus,
   type SaveState,
 } from "@/components/app/studio-parts";
+import { revealResult } from "@/components/app/studio-result";
 import { Spinner } from "@/components/app/spinner";
-import { buttonPrimary, label, surface, textarea } from "@/components/app/styles";
+import { label, surface, textarea } from "@/components/app/styles";
 import { WeatherPicker, type WeatherChoice } from "@/components/app/weather-picker";
+import { Button } from "@/components/ui/button";
 
 type Outfit = { title: string; reasoning: string; missing: string | null; weather: string | null; items: Piece[] };
 
@@ -36,12 +38,14 @@ export function OutfitStudio() {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [save, setSave] = useState<SaveState>({ kind: "idle" });
   const [slow, setSlow] = useState(false);
+  const resultRef = useRef<HTMLElement>(null);
   const loading = status.kind === "loading";
 
   async function build(report = weather?.report ?? null) {
     setStatus({ kind: "loading" });
     setSave({ kind: "idle" });
     setSlow(false);
+    requestAnimationFrame(() => revealResult(resultRef.current));
     const slowTimer = setTimeout(() => setSlow(true), 8000);
     try {
       const res = await fetch("/api/outfits", {
@@ -88,8 +92,8 @@ export function OutfitStudio() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function saveOutfit() {
-    if (status.kind !== "ready") return;
+  async function saveOutfit(): Promise<SaveState> {
+    if (status.kind !== "ready") return save;
     setSave({ kind: "saving" });
     const { outfit } = status;
     const result = await saveSoloOutfit({
@@ -99,7 +103,9 @@ export function OutfitStudio() {
       weather: outfit.weather,
       ids: outfit.items.map((item) => item.id),
     });
-    setSave(result.ok ? { kind: "saved" } : { kind: "error", message: result.message ?? "Couldn't save it." });
+    const next: SaveState = result.ok ? { kind: "saved" } : { kind: "error", message: result.message ?? "Couldn't save it." };
+    setSave(next);
+    return next;
   }
 
   return (
@@ -110,9 +116,9 @@ export function OutfitStudio() {
           event.preventDefault();
           void build();
         }}
-        className={`${surface} flex flex-col gap-6 self-start xl:sticky xl:top-10`}
+        className={`${surface} flex flex-col gap-6 self-start xl:sticky xl:top-12`}
       >
-        <h2 id={`${id}-form`} className="font-heading text-xl font-semibold tracking-tight">
+        <h2 id={`${id}-form`} className="type-heading">
           What&apos;s the plan?
         </h2>
         <div className="flex flex-col gap-2">
@@ -121,40 +127,35 @@ export function OutfitStudio() {
           </label>
           <textarea
             id={`${id}-notes`}
-            rows={4}
+            rows={3}
             maxLength={500}
             value={notes}
             onChange={(event) => setNotes(event.target.value)}
-            placeholder="e.g. Dinner with friends, somewhere a bit dressy…"
+            placeholder="Dinner with friends, somewhere a bit dressy…"
             className={textarea}
           />
         </div>
         <WeatherPicker onChange={handleWeather} initialQuery={initialWeather} />
-        <button
-          type="submit"
-          disabled={loading}
-          aria-busy={loading || undefined}
-          className={`${buttonPrimary} h-12 w-full text-[15px]`}
-        >
+        <Button type="submit" size="lg" disabled={loading} aria-busy={loading || undefined} className="w-full">
           {loading ? (
             <Spinner />
           ) : status.kind === "ready" ? (
-            <ArrowsClockwiseIcon aria-hidden="true" className="size-4" />
+            <ArrowsClockwiseIcon aria-hidden="true" />
           ) : (
-            <SparkleIcon aria-hidden="true" className="size-4" weight="fill" />
+            <SparkleIcon aria-hidden="true" weight="fill" />
           )}
           {loading ? "Styling…" : status.kind === "ready" ? "Try Another" : "Build Outfit"}
-        </button>
+        </Button>
         <Link
           href="/outfits/match"
-          className="inline-flex items-center justify-center gap-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          className="inline-flex items-center justify-center gap-2 rounded-full text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
         >
           <UsersThreeIcon aria-hidden="true" className="size-4" />
           Match with a friend instead
         </Link>
       </form>
 
-      <section aria-label="Your outfit" aria-busy={loading} className="min-w-0">
+      <section ref={resultRef} aria-label="Your outfit" aria-busy={loading} className="min-w-0 scroll-mt-6">
         {status.kind === "idle" && (
           <EmptyResult>Describe your day and add the weather, then build an outfit from your wardrobe.</EmptyResult>
         )}
@@ -170,13 +171,14 @@ export function OutfitStudio() {
           </EmptyResult>
         )}
         {status.kind === "ready" && (
-          <OutfitViewArea>
+          <OutfitViewArea className="enter-rise">
             <div className="flex flex-wrap items-start justify-between gap-4">
-              <div className="min-w-0 max-w-[60ch]">
-                <h2 className="type-display text-3xl md:text-4xl">{status.outfit.title}</h2>
+              <div className="max-w-[60ch] min-w-0">
+                <p className="type-eyebrow text-thread-text">Today&apos;s look</p>
+                <h2 className="type-title mt-2">{status.outfit.title}</h2>
                 <p className="mt-3 leading-relaxed text-pretty text-muted-foreground">{status.outfit.reasoning}</p>
                 {status.outfit.missing && (
-                  <p className="mt-2 text-sm text-pretty">
+                  <p className="mt-3 text-sm text-pretty">
                     <span className="font-medium">Would complete it:</span> {status.outfit.missing}
                   </p>
                 )}
@@ -184,7 +186,7 @@ export function OutfitStudio() {
               <OutfitViewToggle />
             </div>
             <div className="mt-8">
-              <OutfitPieces pieces={status.outfit.items} />
+              <OutfitPieces pieces={status.outfit.items} scope="studio" />
             </div>
             <div className="mt-8 border-t border-border pt-6">
               <SaveButton state={save} onSave={saveOutfit} />

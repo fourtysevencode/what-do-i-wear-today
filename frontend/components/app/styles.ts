@@ -1,28 +1,21 @@
-// Shared control styles for the signed-in app. Shape rule from the homepage:
-// controls are pills, surfaces use --radius-surface, prints use --radius-print.
+// Shared field and surface styles. Buttons live in components/ui/button.tsx.
+// Shape rule: controls are pills, surfaces use --radius-surface, cards --radius-card.
 
-// While a request runs, a button gets aria-busy: it darkens and stays fully opaque
-// (instead of fading like a plain disabled button) so the press reads as "working".
-const busy = "disabled:not-aria-busy:opacity-60 aria-busy:brightness-[0.82]";
+const focus = "outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20";
 
-const focus =
-  "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+// text-base: 16px, or iOS zooms the page when the field gets focus.
+export const inputBase = `w-full border border-input bg-card text-base text-foreground placeholder:text-muted-foreground transition-[border-color,box-shadow] aria-invalid:border-destructive ${focus}`;
 
-export const buttonPrimary = `inline-flex h-11 items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-medium whitespace-nowrap text-primary-foreground transition-[background-color,scale,opacity] duration-300 ease-soft hover:bg-primary/90 active:scale-[0.98] disabled:pointer-events-none ${busy} ${focus}`;
+export const input = `${inputBase} h-12 rounded-full px-5`;
 
-export const buttonSecondary = `inline-flex h-11 items-center justify-center gap-2 rounded-full border border-foreground/15 px-5 text-sm font-medium whitespace-nowrap transition-[background-color,border-color,scale,opacity] duration-300 ease-soft hover:border-foreground/30 hover:bg-foreground/5 active:scale-[0.98] disabled:pointer-events-none ${busy} ${focus}`;
-
-export const buttonSmall = `inline-flex h-9 items-center justify-center gap-1.5 rounded-full px-4 text-sm font-medium whitespace-nowrap transition-[background-color,border-color,scale] duration-300 ease-soft active:scale-[0.98] disabled:pointer-events-none ${busy} ${focus}`;
-
-export const inputBase =
-  "w-full border border-input bg-card text-[15px] text-foreground placeholder:text-muted-foreground transition-[border-color,box-shadow] duration-200 outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/25 aria-invalid:border-destructive";
-
-export const input = `${inputBase} h-11 rounded-full px-4`;
-
-export const textarea = `${inputBase} min-h-28 resize-y rounded-(--radius-print) px-4 py-3 leading-relaxed`;
+export const textarea = `${inputBase} min-h-28 resize-y rounded-(--radius-card) px-4 py-3 leading-relaxed`;
 
 export const label = "text-sm font-medium";
 
 export const fieldError = "text-sm text-destructive";
 
-export const surface = "rounded-(--radius-surface) bg-card p-5 ring-1 ring-border md:p-6";
+export const surface = "rounded-(--radius-surface) bg-card p-5 shadow-card ring-1 ring-border md:p-6";
+
+/** A text link inside a sentence. */
+export const inlineLink =
+  "rounded-sm font-medium text-foreground underline decoration-foreground/25 underline-offset-4 transition-[text-decoration-color] hover:decoration-thread focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none";

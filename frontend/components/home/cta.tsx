@@ -25,7 +25,8 @@ export function PrimaryCta({ href, children, className, external = false }: CtaP
       href={href}
       {...(external ? externalProps : {})}
       className={cn(
-        "group inline-flex h-12 items-center gap-3 rounded-full bg-primary pr-1.5 pl-6 text-[15px] font-medium whitespace-nowrap text-primary-foreground transition-[background-color,scale] duration-300 ease-soft hover:bg-primary/90 active:scale-[0.98]",
+        "group inline-flex h-13 items-center gap-3 rounded-full bg-primary pr-1.5 pl-6 text-base font-medium whitespace-nowrap text-primary-foreground shadow-card select-none",
+        "[transition:background-color_200ms_var(--ease-out),scale_150ms_var(--ease-out)] hover:bg-primary/90 active:scale-[0.97]",
         focusRing,
         className,
       )}
@@ -33,7 +34,7 @@ export function PrimaryCta({ href, children, className, external = false }: CtaP
       {children}
       <span
         aria-hidden="true"
-        className="flex size-9 items-center justify-center rounded-full bg-primary-foreground/15 transition-[translate,scale] duration-500 ease-spring group-hover:translate-x-0.5 group-hover:scale-105"
+        className="flex size-10 items-center justify-center rounded-full bg-primary-foreground/15 transition-[translate] duration-200 ease-out group-hover:translate-x-0.5"
       >
         <Arrow className="size-4" weight="bold" />
       </span>
@@ -47,16 +48,13 @@ export function TextCta({ href, children, className }: Omit<CtaProps, "external"
     <Link
       href={href}
       className={cn(
-        "group inline-flex h-12 items-center gap-1.5 rounded-full px-3 text-[15px] font-medium whitespace-nowrap underline decoration-foreground/25 underline-offset-[6px] transition-[text-decoration-color] duration-300 ease-soft hover:decoration-pop",
+        "group inline-flex h-13 items-center gap-1.5 rounded-full px-3 text-base font-medium whitespace-nowrap underline decoration-foreground/25 underline-offset-[6px] transition-[text-decoration-color] hover:decoration-thread",
         focusRing,
         className,
       )}
     >
       {children}
-      <ArrowRightIcon
-        aria-hidden="true"
-        className="size-4 transition-transform duration-500 ease-spring group-hover:translate-x-0.5"
-      />
+      <ArrowRightIcon aria-hidden="true" className="size-4 transition-[translate] duration-200 ease-out group-hover:translate-x-0.5" />
     </Link>
   );
 }

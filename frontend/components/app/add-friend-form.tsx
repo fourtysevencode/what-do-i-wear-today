@@ -5,7 +5,8 @@ import { useActionState, useEffect, useRef } from "react";
 
 import { addFriend } from "@/app/(app)/friends/actions";
 import { Spinner } from "@/components/app/spinner";
-import { buttonPrimary, input, label } from "@/components/app/styles";
+import { input, label } from "@/components/app/styles";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export function AddFriendForm() {
@@ -24,7 +25,7 @@ export function AddFriendForm() {
       </label>
       <div className="flex max-w-md gap-2">
         <div className="relative min-w-0 flex-1">
-          <span aria-hidden="true" className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-muted-foreground">
+          <span aria-hidden="true" className="pointer-events-none absolute top-1/2 left-5 -translate-y-1/2 text-muted-foreground">
             @
           </span>
           <input
@@ -33,18 +34,20 @@ export function AddFriendForm() {
             type="text"
             autoComplete="off"
             autoCapitalize="none"
+            autoCorrect="off"
             spellCheck={false}
+            enterKeyHint="send"
             required
-            placeholder="username…"
+            placeholder="username"
             aria-describedby={state ? "friend-status" : undefined}
             aria-invalid={state && !state.ok ? true : undefined}
-            className={cn(input, "pl-8")}
+            className={cn(input, "pl-9")}
           />
         </div>
-        <button type="submit" disabled={pending} aria-busy={pending || undefined} className={buttonPrimary}>
-          {pending ? <Spinner /> : <UserPlusIcon aria-hidden="true" className="size-4" />}
-          {pending ? "Sending…" : "Send Request"}
-        </button>
+        <Button type="submit" size="lg" disabled={pending} aria-busy={pending || undefined} className="max-sm:px-4">
+          {pending ? <Spinner /> : <UserPlusIcon aria-hidden="true" />}
+          <span className="max-sm:sr-only">{pending ? "Sending…" : "Send Request"}</span>
+        </Button>
       </div>
       <p
         id="friend-status"

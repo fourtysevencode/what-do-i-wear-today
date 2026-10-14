@@ -4,10 +4,11 @@ import type { CSSProperties } from "react";
 import { cn } from "@/lib/utils";
 import type { Swatch } from "@/lib/wardrobe";
 
-const swatchClass: Record<Swatch, string> = {
-  rose: "bg-rose",
-  peach: "bg-peach",
-  orchid: "bg-orchid",
+export const swatchClass: Record<Swatch, string> = {
+  sage: "bg-sage",
+  clay: "bg-clay",
+  chambray: "bg-chambray",
+  butter: "bg-butter",
 };
 
 type GarmentPrintProps = {
@@ -22,8 +23,8 @@ type GarmentPrintProps = {
 };
 
 /**
- * A garment card, like a print pinned to a board. Shows the cutout when `src`
- * is given, otherwise a tinted placeholder block.
+ * A garment as a lookbook card: the piece on a soft ground, its name, and what it's worn as.
+ * Shows the cutout when `src` is given, otherwise the demo photo or a tinted block.
  */
 export function GarmentPrint({
   garment,
@@ -33,16 +34,17 @@ export function GarmentPrint({
   className,
   style,
 }: GarmentPrintProps) {
+  const ground = "relative aspect-4/5 overflow-hidden rounded-[calc(var(--radius-card)-0.375rem)]";
   return (
     <figure
       className={cn(
-        "@container rounded-(--radius-print) bg-print p-2.5 text-print-foreground shadow-print",
+        "@container rounded-(--radius-card) bg-card p-1.5 text-card-foreground shadow-card ring-1 ring-border",
         className,
       )}
       style={style}
     >
       {src ? (
-        <div className="relative aspect-4/5 rounded-[calc(var(--radius-print)-0.5rem)] bg-secondary/60">
+        <div className={cn(ground, "bg-secondary")}>
           {/* Plain <img>: the src is an authenticated route that redirects to a signed link,
               which the image optimizer couldn't fetch without the user's cookie. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -51,22 +53,19 @@ export function GarmentPrint({
             alt=""
             loading="lazy"
             decoding="async"
-            className="absolute inset-0 size-full object-contain p-[8%] drop-shadow-[0_10px_12px_oklch(0.25_0.05_320/0.22)]"
+            draggable={false}
+            className="absolute inset-0 size-full object-contain p-[9%] drop-shadow-[0_12px_14px_oklch(0.2_0.04_262/0.2)]"
           />
         </div>
       ) : garment.photo ? (
-        <div
-          className={cn(
-            "relative aspect-4/5 overflow-hidden rounded-[calc(var(--radius-print)-0.5rem)]",
-            swatchClass[garment.swatch ?? "peach"],
-          )}
-        >
+        <div className={cn(ground, swatchClass[garment.swatch ?? "clay"])}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={garment.photo.src}
             alt=""
             loading={eager ? "eager" : "lazy"}
             decoding="async"
+            draggable={false}
             className="absolute inset-0 size-full object-cover"
             style={{ objectPosition: garment.photo.position }}
           />
@@ -75,19 +74,16 @@ export function GarmentPrint({
         <div
           aria-hidden="true"
           data-placeholder="garment-photo"
-          className={cn(
-            "flex aspect-4/5 items-center justify-center rounded-[calc(var(--radius-print)-0.5rem)] text-swatch-ink/70",
-            swatchClass[garment.swatch ?? "peach"],
-          )}
+          className={cn(ground, "flex items-center justify-center text-swatch-ink/60", swatchClass[garment.swatch ?? "clay"])}
         >
           <ImageIcon className="size-[18%] min-h-5 min-w-5" />
         </div>
       )}
       {showCaption ? (
-        <figcaption className="flex items-baseline justify-between gap-2 px-1.5 pt-2.5 pb-1 text-[13px] leading-tight">
-          <span className="min-w-0 truncate font-medium">{garment.name}</span>
-          {/* The type tag only shows when the print is wide enough for both. */}
-          <span className="hidden text-print-foreground/65 capitalize @[11.5rem]:inline">
+        <figcaption className="flex items-baseline justify-between gap-2 px-1.5 pt-2 pb-1">
+          <span className="min-w-0 truncate text-sm font-medium">{garment.name}</span>
+          {/* The kind only shows when the card is wide enough for both. */}
+          <span className="type-eyebrow hidden shrink-0 text-[0.6875rem] text-muted-foreground @[10.5rem]:inline">
             {garment.kind}
           </span>
         </figcaption>
